@@ -19,6 +19,17 @@
     </tr>
   </thread>
   <tbody>
-    
+    <tr>
+        <th>1</th>
+        <th>Red-Nosed Reports</th>
+        <td>271.1µs</td>
+        <td>15000</td>
+        <td>2.75996ms</td>
+        <td>2.50386ms</td>
+        <td>1223326</td>
+        <td>2.74583ms</td>
+        <td>2.97148ms</td>
+        <td>1223326</td>
+    </tr>
   </tbody>
 </table>
