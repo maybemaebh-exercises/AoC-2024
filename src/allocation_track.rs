@@ -1,8 +1,8 @@
 pub use tracking_allocator::{
-    AllocationGroupId, AllocationGroupToken, AllocationRegistry, AllocationTracker, Allocator,
+    AllocationGroupId, AllocationRegistry, AllocationTracker, Allocator,
 };
 
-use std::{alloc::System, sync::atomic::AtomicUsize};
+use std::{alloc::System, sync::mpsc::Sender, usize};
 
 // This is where we actually set the global allocator to be the shim allocator implementation from `tracking_allocator`.
 // This allocator is purely a facade to the logic provided by the crate, which is controlled by setting a global tracker
@@ -14,51 +14,49 @@ use std::{alloc::System, sync::atomic::AtomicUsize};
 #[global_allocator]
 static GLOBAL: Allocator<System> = Allocator::system();
 
-pub struct StdoutTracker(AtomicUsize);
+pub struct StdoutTracker(Sender<usize>);
 
 // This is our tracker implementation.  You will always need to create an implementation of `AllocationTracker` in order
 // to actually handle allocation events.  The interface is straightforward: you're notified when an allocation occurs,
 // and when a deallocation occurs.
 impl StdoutTracker {
-    pub fn new() -> Self {
-        StdoutTracker(AtomicUsize::new(0))
+    pub fn new(send_alloc: Sender<usize>) -> Self {
+        StdoutTracker(send_alloc)
     }
-    fn add_allocation(&self) {
-        self.0.fetch_add(1, std::sync::atomic::Ordering::Relaxed);//be carful with relaxed, let everything finnish before grabing
-    }
-    fn get_allocation_count(&self) -> usize {
-        self.0.load(std::sync::atomic::Ordering::SeqCst)
-    }
+    // fn send_allocation_size(&self,size:usize) {
+    //     self.0.send(size);
+    // }
+    // fn get_allocation_count(&self) -> usize {
+    //     self.0.load(std::sync::atomic::Ordering::SeqCst)
+    // }
 }
 
 impl AllocationTracker for StdoutTracker {
     fn allocated(
         &self,
-        addr: usize,
-        object_size: usize,
-        wrapped_size: usize,
-        group_id: AllocationGroupId,
+        _addr: usize,
+        _object_size: usize,
+        _wrapped_size: usize,
+        _group_id: AllocationGroupId,
     ) {
         // Allocations have all the pertinent information upfront, which you may or may not want to store for further
         // analysis. Notably, deallocations also know how large they are, and what group ID they came from, so you
         // typically don't have to store much data for correlating deallocations with their original allocation.
 
-        self.add_allocation();
-
         #[cfg(debug_assertions)]
         println!(
             "allocation -> addr=0x{:0x} object_size={} wrapped_size={} group_id={:?}",
-            addr, object_size, wrapped_size, group_id
+            _addr, _object_size, _wrapped_size, _group_id
         );
     }
 
     fn deallocated(
         &self,
-        addr: usize,
-        object_size: usize,
+        _addr: usize,
+        _object_size: usize,
         wrapped_size: usize,
-        source_group_id: AllocationGroupId,
-        current_group_id: AllocationGroupId,
+        _source_group_id: AllocationGroupId,
+        _current_group_id: AllocationGroupId,
     ) {
         // When a deallocation occurs, as mentioned above, you have full access to the address, size of the allocation,
         // as well as the group ID the allocation was made under _and_ the active allocation group ID.
@@ -69,6 +67,8 @@ impl AllocationTracker for StdoutTracker {
         //     "deallocation -> addr=0x{:0x} object_size={} wrapped_size={} source_group_id={:?} current_group_id={:?}",
         //     addr, object_size, wrapped_size, source_group_id, current_group_id
         // );
+
+        _ = self.0.send(wrapped_size);
     }
 }
 

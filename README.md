@@ -4,32 +4,32 @@
       <th rowspan="2">Day</th>
       <th rowspan="2">Name</th>
       <th colspan="2">Input</th>
-      <th colspan="3">Part 1</th>
-      <th colspan="3">Part 2</th>
+      <th colspan="4">Part 1</th>
+      <th colspan="4">Part 2</th>
     </tr>
     <tr>
       <th>Time</th>
       <th>Size</th>
       <th>Time</th>
-      <th>Allocations</th>
+      <th colspan="2">Allocations</th>
       <th>Result</th>
       <th>Time</th>
-      <th>Allocations</th>
+      <th colspan="2">Allocations</th>
       <th>Result</th>
     </tr>
   </thread>
-  <tbody>
-    <tr>
-        <th>1</th>
-        <th>Red-Nosed Reports</th>
-        <td>271.1µs</td>
-        <td>15000</td>
-        <td>2.75996ms</td>
-        <td>2.50386ms</td>
-        <td>1223326</td>
-        <td>2.74583ms</td>
-        <td>2.97148ms</td>
-        <td>1223326</td>
-    </tr>
-  </tbody>
+  <tbody id="results">
+<tr>
+<th>1</th>
+<th>Red-Nosed Reports</th>
+<td>203.9µs</td>
+<td>14000b</td>
+<td>84.51µs</td>
+<td>24080b</td><td>4</td>
+<td>1223326</td>
+<td>84.72µs</td>
+<td>24080b</td><td>4</td>
+<td>1223326</td>
+</tr>
+</tbody>
 </table>

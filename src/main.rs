@@ -27,17 +27,20 @@ const PROBLEM_NAMES: [&str; 25] = [
 ];
 
 use std::fs;
+use std::sync::mpsc;
 use std::time::{Duration, Instant};
+use regex::Regex;
 
 mod problems;
 mod allocation_track;
 
 const BENCHMARK_TIMES:u32 = 10;
+include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 
 macro_rules! benchmark_problem_part {
     ($d:ident,$part:ident,$input:ident) => {{
         let mut time = Duration::new(0, 0);
-        for i in 0..BENCHMARK_TIMES {
+        for _i in 0..BENCHMARK_TIMES {
             let now = Instant::now();
             problems::$d::$part(&$input);
             time += now.elapsed();
@@ -47,47 +50,68 @@ macro_rules! benchmark_problem_part {
     }};
 }
 macro_rules! allocations_problem_part {
-    ($d:ident,$part:ident,$input:ident) => {{
+    ($d:ident,$part:ident,$input:ident, $alloc_reciver:ident) => {{
         allocation_track::AllocationRegistry::enable_tracking();
         problems::$d::$part(&$input);
         allocation_track::AllocationRegistry::disable_tracking();
-        allocation_track::AllocationRegistry::get_global_tracker().
+        let mut allocation_count:usize = 0;
+        let mut allocation_size:usize = 0;
+        for alocation in $alloc_reciver.try_iter() {
+            allocation_count += 1;
+            allocation_size += alocation
+        }
+        (allocation_size, allocation_count)
     }};
 }
 
 macro_rules! table_row {
-    ($d:ident) => {
+    ($d:ident, $alloc_reciver:ident) => {{
+        let mut tr = String::new();
         let day_string = stringify!($d);
         let day_num:String = "day1".chars().filter(|x| x.is_numeric()).collect();
         let day_num:usize = day_num.parse().unwrap();
         let now = Instant::now();
-        let input = fs::read_to_string(format!("input/{day_string}.txt")).expect("input missing"); 
+        let input = fs::read_to_string(format!("input/{day_string}.txt")).expect("input missing");
         let load_time = now.elapsed();
 
-        println!("<tr>");
+        tr.push_str("\n<tr>");
 
-        println!("<th>{}</th>",day_num );
-        println!("<th>{}</th>",PROBLEM_NAMES[day_num]);
+        tr.push_str(&format!("\n<th>{}</th>",day_num));
+        tr.push_str(&format!("\n<th>{}</th>",PROBLEM_NAMES[day_num]));
 
-        println!("<td>{:?}</td>",load_time);
-        println!("<td>{}</td>",input.len());
+        tr.push_str(&format!("\n<td>{:?}</td>",load_time));
+        tr.push_str(&format!("\n<td>{}b</td>",input.len()));
 
-        println!("<td>{:?}</td>",benchmark_problem_part!($d,part1,input));
-        println!("<td>{:?}</td>",allocations_problem_part!($d,part1,input));
-        println!("<td>{}</td>",problems::$d::part1(&input));
+        tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1,input)));
+        let allocations = allocations_problem_part!($d,part1,input,$alloc_reciver);
+        tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+        tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1(&input)));
 
-        println!("<td>{:?}</td>",benchmark_problem_part!($d,part2,input));
-        println!("<td>{:?}</td>",allocations_problem_part!($d,part2,input));
-        println!("<td>{}</td>",problems::$d::part1(&input));
+        tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part2,input)));
+        let allocations = allocations_problem_part!($d,part2,input,$alloc_reciver);
+        tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));
+        tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1(&input)));
 
-        println!("</tr>");
-    };
+        tr.push_str("\n</tr>");
+        tr
+    }}
 }
 
 fn main() {
-    let _ = allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new())
+    let mut tbody = String::from("<tbody id=\"results\">");
+    let (allocation_size_send, allocation_size_receive) = mpsc::channel();
+    let _ = allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new(allocation_size_send))
     .expect("no other global tracker should be set yet");
-tracking_allocator::get_global_tracker();
 
-    table_row!(day1);
+    tbody.push_str(&table_row!(day1,allocation_size_receive));
+
+    tbody.push_str("\n</tbody>");
+
+    let readme = fs::read_to_string("README.md").expect("input missing");
+    let updated_readme:String = Regex::new("<tbody id=\"results\">(.|\n)*</tbody>").unwrap().replace(&readme, tbody).into();
+    if BUILD_PROFILE == "release" {
+        fs::write("README.md", &updated_readme).expect("could not write to file");
+    } else {
+        println!("{}", updated_readme);
+    }
 }
