@@ -90,7 +90,7 @@ macro_rules! table_row {
         tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part2,input)));
         let allocations = allocations_problem_part!($d,part2,input,$alloc_reciver);
         tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));
-        tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1(&input)));
+        tr.push_str(&format!("\n<td>{}</td>",problems::$d::part2(&input)));
 
         tr.push_str("\n</tr>");
         tr
