@@ -30,7 +30,7 @@ use std::fs;
 use std::time::{Duration, Instant};
 
 mod problems;
-
+mod allocation_track;
 
 const BENCHMARK_TIMES:u32 = 10;
 
@@ -48,14 +48,10 @@ macro_rules! benchmark_problem_part {
 }
 macro_rules! allocations_problem_part {
     ($d:ident,$part:ident,$input:ident) => {{
-        let mut time = Duration::new(0, 0);
-        for i in 0..BENCHMARK_TIMES {
-            let now = Instant::now();
-            problems::$d::$part(&$input);
-            time += now.elapsed();
-        }
-        time /= BENCHMARK_TIMES;
-        time
+        allocation_track::AllocationRegistry::enable_tracking();
+        problems::$d::$part(&$input);
+        allocation_track::AllocationRegistry::disable_tracking();
+        allocation_track::AllocationRegistry::get_global_tracker().
     }};
 }
 
@@ -89,5 +85,9 @@ macro_rules! table_row {
 }
 
 fn main() {
+    let _ = allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new())
+    .expect("no other global tracker should be set yet");
+tracking_allocator::get_global_tracker();
+
     table_row!(day1);
 }
