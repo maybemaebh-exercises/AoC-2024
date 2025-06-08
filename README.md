@@ -22,12 +22,12 @@
 <tr>
 <th>1</th>
 <th>Red-Nosed Reports</th>
-<td>203.9µs</td>
+<td>138.6µs</td>
 <td>14000b</td>
-<td>84.51µs</td>
+<td>73.238µs</td>
 <td>24080b</td><td>4</td>
 <td>1223326</td>
-<td>84.72µs</td>
+<td>83.587µs</td>
 <td>24080b</td><td>4</td>
 <td>1223326</td>
 </tr>

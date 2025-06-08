@@ -34,7 +34,7 @@ use regex::Regex;
 mod problems;
 mod allocation_track;
 
-const BENCHMARK_TIMES:u32 = 10;
+const BENCHMARK_TIMES:u32 = 1000;
 include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 
 macro_rules! benchmark_problem_part {
@@ -100,7 +100,7 @@ macro_rules! table_row {
 fn main() {
     let mut tbody = String::from("<tbody id=\"results\">");
     let (allocation_size_send, allocation_size_receive) = mpsc::channel();
-    let _ = allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new(allocation_size_send))
+    allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new(allocation_size_send))
     .expect("no other global tracker should be set yet");
 
     tbody.push_str(&table_row!(day1,allocation_size_receive));
