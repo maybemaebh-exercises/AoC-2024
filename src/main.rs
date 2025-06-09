@@ -71,7 +71,9 @@ macro_rules! table_row {
         let day_num:String = "day1".chars().filter(|x| x.is_numeric()).collect();
         let day_num:usize = day_num.parse().unwrap();
         let now = Instant::now();
-        let input = fs::read_to_string(format!("input/{day_string}.txt")).expect("input missing");
+        let input = fs::read(format!("input/{day_string}.txt")).expect("input missing");
+        let input_len = input.len();
+        let input = String::from_utf8_lossy(&input);
         let load_time = now.elapsed();
 
         tr.push_str("\n<tr>");
@@ -80,7 +82,7 @@ macro_rules! table_row {
         tr.push_str(&format!("\n<th>{}</th>",PROBLEM_NAMES[day_num]));
 
         tr.push_str(&format!("\n<td>{:?}</td>",load_time));
-        tr.push_str(&format!("\n<td>{}b</td>",input.len()));
+        tr.push_str(&format!("\n<td>{}b</td>",input_len));
 
         tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1,input)));
         let allocations = allocations_problem_part!($d,part1,input,$alloc_reciver);
