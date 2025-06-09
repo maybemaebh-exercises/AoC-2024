@@ -77,7 +77,7 @@ pub fn part2 (input:&str) -> usize {
 }
 
 #[allow(unused)]
-const TEST_INPUT:&str =  include_str!("test_input.txt");
+const TEST_INPUT:&str =  include_str!("day1_test.txt");
 
 #[cfg(test)]
 mod tests {
@@ -85,11 +85,11 @@ mod tests {
 
     #[test]
     fn day1_part1() {
-        assert_eq!(part1(TEST_INPUT),11);
+        assert_eq!(part1(TEST_INPUT), 11);
     }
     
     #[test]
     fn day1_part2() {
-        assert_eq!(part2(TEST_INPUT),31)
+        assert_eq!(part2(TEST_INPUT), 31)
     }
 }

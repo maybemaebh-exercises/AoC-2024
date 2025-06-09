@@ -104,6 +104,7 @@ fn main() {
     .expect("no other global tracker should be set yet");
 
     tbody.push_str(&table_row!(day1,allocation_size_receive));
+    tbody.push_str(&table_row!(day2,allocation_size_receive));
 
     tbody.push_str("\n</tbody>");
 
