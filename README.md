@@ -22,24 +22,24 @@
 <tr>
 <th>1</th>
 <th>Red-Nosed Reports</th>
-<td>156.5µs</td>
+<td>881.1µs</td>
 <td>14000b</td>
-<td>78.522µs</td>
+<td>80.246µs</td>
 <td>24080b</td><td>4</td>
 <td>1223326</td>
-<td>75.891µs</td>
+<td>88.382µs</td>
 <td>24080b</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
-<th>1</th>
-<th>Red-Nosed Reports</th>
-<td>178.4µs</td>
+<th>2</th>
+<th>Mull It Over</th>
+<td>1.0078ms</td>
 <td>19397b</td>
-<td>82.849µs</td>
+<td>86.967µs</td>
 <td>0b</td><td>0</td>
 <td>334</td>
-<td>225.345µs</td>
+<td>246.587µs</td>
 <td>0b</td><td>0</td>
 <td>400</td>
 </tr>

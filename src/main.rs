@@ -68,7 +68,7 @@ macro_rules! table_row {
     ($d:ident, $alloc_reciver:ident) => {{
         let mut tr = String::new();
         let day_string = stringify!($d);
-        let day_num:String = "day1".chars().filter(|x| x.is_numeric()).collect();
+        let day_num:String = day_string.chars().filter(|x| x.is_numeric()).collect();
         let day_num:usize = day_num.parse().unwrap();
         let now = Instant::now();
         let input = fs::read(format!("input/{day_string}.txt")).expect("input missing");
