@@ -79,7 +79,7 @@ macro_rules! table_row {
         tr.push_str("\n<tr>");
 
         tr.push_str(&format!("\n<th>{}</th>",day_num));
-        tr.push_str(&format!("\n<th>{}</th>",PROBLEM_NAMES[day_num]));
+        tr.push_str(&format!("\n<th>{}</th>",PROBLEM_NAMES[day_num-1]));
 
         tr.push_str(&format!("\n<td>{:?}</td>",load_time));
         tr.push_str(&format!("\n<td>{}b</td>",input_len));

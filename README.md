@@ -21,37 +21,37 @@
   <tbody id="results">
 <tr>
 <th>1</th>
-<th>Red-Nosed Reports</th>
-<td>167.3µs</td>
+<th>Historian Hysteria</th>
+<td>211.8µs</td>
 <td>14000b</td>
-<td>84.604µs</td>
+<td>78.467µs</td>
 <td>24080b</td><td>4</td>
 <td>1223326</td>
-<td>86.021µs</td>
+<td>85.193µs</td>
 <td>24080b</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
-<th>Mull It Over</th>
-<td>168µs</td>
+<th>Red-Nosed Reports</th>
+<td>189.8µs</td>
 <td>19397b</td>
-<td>85.967µs</td>
+<td>85.455µs</td>
 <td>0b</td><td>0</td>
 <td>334</td>
-<td>226.546µs</td>
+<td>234.203µs</td>
 <td>0b</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
-<th>Ceres Search</th>
-<td>1.5194ms</td>
+<th>Mull It Over</th>
+<td>185.8µs</td>
 <td>17161b</td>
-<td>42.092µs</td>
+<td>42.085µs</td>
 <td>0b</td><td>0</td>
 <td>165225049</td>
-<td>69.235µs</td>
+<td>69.407µs</td>
 <td>152b</td><td>5</td>
 <td>108830766</td>
 </tr>
