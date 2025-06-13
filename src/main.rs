@@ -113,6 +113,7 @@ fn main() {
     tbody.push_str(&table_row!(day2,allocation_size_receive));
     tbody.push_str(&table_row!(day3,allocation_size_receive));
     tbody.push_str(&table_row!(day4,allocation_size_receive));
+    tbody.push_str(&table_row!(day5,allocation_size_receive));
 
     tbody.push_str("\n</tbody>");
 
