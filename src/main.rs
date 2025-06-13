@@ -40,7 +40,7 @@ include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 macro_rules! benchmark_problem_part {
     ($d:ident,$part:ident,$input:ident) => {{
         let mut time = Duration::new(0, 0);
-        for _i in 0..BENCHMARK_TIMES {
+        for _i in 0..(if BUILD_PROFILE == "release" {BENCHMARK_TIMES} else {1}) {
             let now = Instant::now();
             problems::$d::$part(&$input);
             time += now.elapsed();
@@ -51,6 +51,10 @@ macro_rules! benchmark_problem_part {
 }
 macro_rules! allocations_problem_part {
     ($d:ident,$part:ident,$input:ident, $alloc_reciver:ident) => {{
+        #[cfg(debug_assertions)]
+        println!(stringify!($d));
+        #[cfg(debug_assertions)]
+        println!(stringify!($part));
         allocation_track::AllocationRegistry::enable_tracking();
         problems::$d::$part(&$input);
         allocation_track::AllocationRegistry::disable_tracking();
@@ -108,6 +112,7 @@ fn main() {
     tbody.push_str(&table_row!(day1,allocation_size_receive));
     tbody.push_str(&table_row!(day2,allocation_size_receive));
     tbody.push_str(&table_row!(day3,allocation_size_receive));
+    tbody.push_str(&table_row!(day4,allocation_size_receive));
 
     tbody.push_str("\n</tbody>");
 
