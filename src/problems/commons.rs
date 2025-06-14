@@ -1,5 +1,5 @@
+use std::hash::{Hash, Hasher};
 use std::ops::{Add, Sub};
-use crate::BUILD_PROFILE;
 
 pub struct CharGrid {
     pub chars: Vec<char>,
@@ -8,11 +8,11 @@ pub struct CharGrid {
 
 impl CharGrid {
     pub fn index(&self, quard: Uquard) -> Option<&char> {
-        if quard.0>self.bounds[0] {None} else {self.chars.get(quard.1*(self.bounds[0]) + quard.0)}
+        if quard.0>=self.bounds[0] {None} else {self.chars.get(quard.1*(self.bounds[0]) + quard.0)}
     }
 
     pub fn index_mut(&mut self, quard: Uquard) -> Option<&mut char> {
-        if quard.0>self.bounds[0] {None} else {self.chars.get_mut(quard.1*(self.bounds[0]) + quard.0)}
+        if quard.0>=self.bounds[0] {None} else {self.chars.get_mut(quard.1*(self.bounds[0]) + quard.0)}
     }
 
     pub fn vec_index_to_uquard(&self, index: usize) -> Uquard {
@@ -21,7 +21,7 @@ impl CharGrid {
 
     #[allow(dead_code)]
     pub fn debug_print(&self) {
-        #[cfg(test)]
+        //#[cfg(test)]
         {
             println!();
             for y in 0..self.bounds[1] {
@@ -55,6 +55,13 @@ impl Add for Uquard {
     }
 
 }
+
+// impl Hash for Uquard {
+//     fn hash<H: Hasher>(&self, state: &mut H) {
+//         (self.0*(self.1*1000)).hash(state);
+//     }
+// }
+
 impl Sub for Uquard {
     type Output = Option<Self>;
     fn sub(self, rhs: Self) -> Self::Output {

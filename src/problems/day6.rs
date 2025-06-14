@@ -1,6 +1,4 @@
-use std::cmp::PartialEq;
-use std::mem::swap;
-use ahash::{HashSet, HashSetExt, RandomState};
+use ahash::{HashSet, HashSetExt};
 use crate::problems::commons::{CharGrid, Uquard};
 
 pub fn part1(input: &str) -> usize {
@@ -14,29 +12,25 @@ pub fn part1(input: &str) -> usize {
     grid.chars[guard_index] = 'X';
 
     'movemnet_loop:loop {
-        //grid.debug_print();
-        let next_guard_postion = get_next_guard_position(guard_position, guard_rotation);
-        //println!("{guard_rotation}->{next_guard_postion:?}");
+        let next_guard_postion = get_next_guard_position_mut(guard_position, guard_rotation, &mut grid);
         match next_guard_postion {
             None => break 'movemnet_loop,
-            Some(next_guard_postion) => {
-                if let Some(next_guard_char) = grid.index_mut(next_guard_postion) {
-                    if next_guard_char == &'#' {
-                        guard_rotation = match guard_rotation {
-                            '^' => '>',
-                            '>' => 'v',
-                            'v' => '<',
-                            '<' => '^',
-                            _ => unreachable!()
-                        }
-                    } else {
-                        guard_position = next_guard_postion;
-                        if next_guard_char != &'X'{
-                            *next_guard_char = 'X';
-                            running_count += 1;
-                        }
+            Some(next_guard) => {
+                if next_guard.1 == &'#' {
+                    guard_rotation = match guard_rotation {
+                        '^' => '>',
+                        '>' => 'v',
+                        'v' => '<',
+                        '<' => '^',
+                        _ => unreachable!()
                     }
-                } else { break 'movemnet_loop; }
+                } else {
+                    guard_position = next_guard.0;
+                    if next_guard.1 != &'X'{
+                        *next_guard.1 = 'X';
+                        running_count += 1;
+                    }
+                }
             }
         }
     }
@@ -55,50 +49,40 @@ pub fn part2(input: &str) -> usize {
     let mut guard_position = grid.vec_index_to_uquard(guard_intial.0);
     let initial_guard_position = guard_position;
     let mut guard_rotation = *guard_intial.1;
-    let guard_index = guard_intial.0;
-    grid.chars[guard_index] = 'X';
 
-    'movemnet_loop:loop {
-        //grid.debug_print();
-        let next_guard_postion = get_next_guard_position(guard_position, guard_rotation);
-        //println!("{guard_rotation}->{next_guard_postion:?}");
+    loop {
+        let next_guard_postion = get_next_guard(guard_position, guard_rotation, &grid);
         match next_guard_postion {
-            None => break 'movemnet_loop,
-            Some(next_guard_position) => {
-                if let Some(next_guard_char) = grid.index_mut(next_guard_position) {
-                    if next_guard_char == &'#' {
-                        guard_rotation = rotate_90_cw(guard_rotation)
-                    } else {
-                        //find if an obstruction here whould cause a loop
-                        let test_rotation = guard_rotation;
-                        let test_position = guard_position;
-                        let barrier_char = grid.index_mut(next_guard_position).unwrap();
-                        if !(next_guard_position == initial_guard_position) && barrier_char != &'O'{
-                            let old_char = *barrier_char;
-                            *barrier_char = '#';
-                            if traversal_loops(test_position, test_rotation, &grid, &mut hash_set_for_treversal_loops) {
-                                let barrier_char = grid.index_mut(next_guard_position).unwrap();
-                                *barrier_char = 'O';
-                                running_count += 1;
-                            } else {
-                                let barrier_char = grid.index_mut(next_guard_position).unwrap();
-                                *barrier_char = old_char;
-                            }
+            None => break,
+            Some(next_guard) => {
+                if next_guard.1 == '#' {
+                    guard_rotation = rotate_90_cw(guard_rotation)
+                } else {
+                    //find if an obstruction here whould cause a loop
+                    let test_rotation = guard_rotation;
+                    let test_position = guard_position;
+                    let barrier_position = next_guard.0;
+                    let barrier_char = grid.index_mut(barrier_position).unwrap();
+                    if (!(barrier_position == initial_guard_position))&& barrier_char != &'O'{
+                        let old_char = *barrier_char;
+                        *barrier_char = '#';
+                        if traversal_loops(test_position, test_rotation, &grid, &mut hash_set_for_treversal_loops) {
+                            let barrier_char = grid.index_mut(barrier_position).unwrap();
+                            *barrier_char = 'O';
+                            running_count += 1;
+                        } else {
+                            let barrier_char = grid.index_mut(barrier_position).unwrap();
+                            *barrier_char = old_char;
                         }
-                        if !(next_guard_position == initial_guard_position) && traversal_loops(test_position, test_rotation, &grid, &mut hash_set_for_treversal_loops) {
-                            let barrier_char = grid.index_mut(next_guard_position).unwrap();
-                            if barrier_char != &'O'{
-                                *barrier_char = 'O';
-                                running_count += 1;
-                            }
-                        }
-                        guard_position = next_guard_position;
                     }
-                } else { break 'movemnet_loop; }
+                    guard_position = next_guard.0;
+                }
             }
         }
     }
-    //assert_eq!(grid.chars.iter().filter(|x|x==&&'O').count(), running_count);
+    // assert_eq!(grid.chars.iter().filter(|x|x==&&'O').count(), running_count);
+    // assert_eq!(grid.index(Uquard(grid.bounds[0]-1, grid.bounds[1]-1)), Some(grid.chars.last().unwrap()));
+
     grid.debug_print();
     running_count
 }
@@ -111,62 +95,57 @@ fn traversal_loops(position: Uquard, rotation: char, char_grid: &CharGrid, hash_
     // print!("initial:({rotation})");
     let mut current_rotation = rotate_90_cw(rotation);
     loop {
-        // print!("{current_rotation}{current_position:?}");
-        match get_next_guard_position(current_position, current_rotation) {
+        if !hash_set.insert((current_position,current_rotation)) {
+            return true;
+        }
+        match get_next_guard(current_position, current_rotation, &char_grid) {
             None => { return false; },
-            Some(next_guard_postion) => {
-                match char_grid.index(next_guard_postion) {
-                    None => { return false; },
-                    Some(next_guard_char) => {
-                        if next_guard_char == &'#' {
-                            current_rotation = rotate_90_cw(current_rotation);
-                        } else {
-                            hash_set.insert((current_position,current_rotation));
-                            current_position = next_guard_postion;
-                        }
-                    }
+            Some(next_guard) => {
+                if next_guard.1 == '#' {
+                    current_rotation = rotate_90_cw(current_rotation);
+                } else {
+                    current_position = next_guard.0;
                 }
             }
         }
-        if hash_set.contains(&(current_position,current_rotation)) {
-            return true;
-        }
     }
 }
-fn debug_print_traversal_loops(position: Uquard, rotation: char, char_grid: &mut CharGrid) -> bool {
-    let mut current_position = position;
-    // println!();
-    // print!("initial:({rotation})");
-    let mut current_rotation = rotate_90_cw(rotation);
-    loop {
-        let current_char = char_grid.index_mut(current_position).unwrap();
-        let old_char = *current_char;
-        *current_char = '%';
-        char_grid.debug_print();
-        let current_char = char_grid.index_mut(current_position).unwrap();
-        *current_char = old_char;
 
-        // print!("{current_rotation}{current_position:?}");
-        match get_next_guard_position(current_position, current_rotation) {
-            None => { return false; },
-            Some(next_guard_postion) => {
-                match char_grid.index(next_guard_postion) {
-                    None => { return false; },
-                    Some(next_guard_char) => {
-                        if next_guard_char == &'#' {
-                            current_rotation = rotate_90_cw(current_rotation);
-                        } else {
-                            current_position = next_guard_postion;
-                        }
-                    }
-                }
-            }
-        }
-        if current_position == position && current_rotation == rotation {
-            return true;
-        }
-    }
-}
+// #[allow(dead_code)]
+// fn debug_print_traversal_loops(position: Uquard, rotation: char, char_grid: &mut CharGrid) -> bool {
+//     let mut current_position = position;
+//     // println!();
+//     // print!("initial:({rotation})");
+//     let mut current_rotation = rotate_90_cw(rotation);
+//     loop {
+//         let current_char = char_grid.index_mut(current_position).unwrap();
+//         let old_char = *current_char;
+//         *current_char = '%';
+//         char_grid.debug_print();
+//         let current_char = char_grid.index_mut(current_position).unwrap();
+//         *current_char = old_char;
+//
+//         // print!("{current_rotation}{current_position:?}");
+//         match get_next_guard_position(current_position, current_rotation) {
+//             None => { return false; },
+//             Some(next_guard_postion) => {
+//                 match char_grid.index(next_guard_postion) {
+//                     None => { return false; },
+//                     Some(next_guard_char) => {
+//                         if next_guard_char == &'#' {
+//                             current_rotation = rotate_90_cw(current_rotation);
+//                         } else {
+//                             current_position = next_guard_postion;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         if current_position == position && current_rotation == rotation {
+//             return true;
+//         }
+//     }
+// }
 
 fn rotate_90_cw(guard_rotation: char) -> char {
     match guard_rotation {
@@ -175,6 +154,25 @@ fn rotate_90_cw(guard_rotation: char) -> char {
         'v' => '<',
         '<' => '^',
         _ => unreachable!()
+    }
+}
+
+fn get_next_guard(guard_position: Uquard, guard_rotation: char, char_grid: &CharGrid) -> Option<(Uquard, char)> {
+    let next_position = get_next_guard_position(guard_position, guard_rotation);
+    match next_position {
+        None => None,
+        Some(next_position) => {
+            (char_grid.index(next_position)).map(|char| (next_position, *char))
+        }
+    }
+}
+fn get_next_guard_position_mut(guard_position: Uquard, guard_rotation: char, char_grid: &mut CharGrid) -> Option<(Uquard, &mut char)> {
+    let next_position = get_next_guard_position(guard_position, guard_rotation);
+    match next_position {
+        None => None,
+        Some(next_position) => {
+            (char_grid.index_mut(next_position)).map(|char| (next_position, char))
+        }
     }
 }
 
