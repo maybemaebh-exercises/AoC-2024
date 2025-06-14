@@ -34,7 +34,7 @@ pub fn part1(input: &str) -> usize {
             }
         }
     }
-    grid.debug_print();
+    //grid.debug_print();
     //assert_eq!(running_count, grid.chars.iter().filter(|c| **c == 'X').count());
     //println!("{:?}",grid.chars);
     running_count
@@ -44,16 +44,51 @@ pub fn part2(input: &str) -> usize {
     let mut grid = CharGrid::new(input);
     let mut running_count = 0;//starting position
     let mut current_position = grid.find_initial_guard_location();
-    let mut current_rotation = Direction::DownwardsDownY;
+    let initial_guard_position = current_position;
+    let mut current_direction = Direction::UpwardsDownY;
+    let mut vec_for_loops_at = Vec::with_capacity(40);
 
-    running_count
+    loop{
+        match grid.next_guard(current_position, current_direction) {
+            None => {return running_count;},
+            Some(next_guard) => {
+                let currenct_char = grid.index_mut(current_position).unwrap();
+                if currenct_char != &'O' {*currenct_char = 'V'}
+                if next_guard.0 != current_position && next_guard.2 != 'V' && next_guard.2 != 'O'&& next_guard.0 != initial_guard_position {
+                    //assert_eq!(next_guard.2,'.');
+                    *grid.index_mut(next_guard.0).unwrap() = '#';
+                    if grid.loops_at(current_position, current_direction, &grid, &mut vec_for_loops_at) {
+                        *grid.index_mut(next_guard.0).unwrap() = 'O';
+                        running_count += 1;
+                    } else {
+                        *grid.index_mut(next_guard.0).unwrap() = '.';
+                    }
+                }
+                current_position = next_guard.0;
+                current_direction = next_guard.1;
+            }
+        }
+    }
 }
 
+#[derive(Debug,Clone,Copy)]
+#[derive(PartialEq)]
 enum Direction{
-    UpwardsPlusY,
-    RightwardsPlusX,
-    DownwardsDownY,
-    LeftwardsDownY,
+    UpwardsDownY,
+    RightwardsUpX,
+    DownwardsUpY,
+    LeftwardsDownX,
+}
+
+impl Direction {
+    fn rotate_90cw(&self) -> Self{
+        match self {
+            Direction::UpwardsDownY => Direction::RightwardsUpX,
+            Direction::RightwardsUpX => Direction::DownwardsUpY,
+            Direction::DownwardsUpY => Direction::LeftwardsDownX,
+            Direction::LeftwardsDownX => Direction::UpwardsDownY,
+        }
+    }
 }
 
 impl CharGrid {
@@ -61,15 +96,34 @@ impl CharGrid {
         let index = self.chars.iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
         self.vec_index_to_uquard(index)
     }
-}
-
-impl Direction {
-    fn rotate_90cw(&mut self){
-        *self = match self {
-            Direction::UpwardsPlusY => Direction::RightwardsPlusX,
-            Direction::RightwardsPlusX => Direction::DownwardsDownY,
-            Direction::DownwardsDownY => Direction::LeftwardsDownY,
-            Direction::LeftwardsDownY => Direction::UpwardsPlusY,
+    fn next_guard(&self, position: Uquard, direction: Direction) -> Option<(Uquard, Direction, char)> {
+        let in_front_positon = match direction {
+            Direction::UpwardsDownY => { position - Uquard(0, 1)},
+            Direction::RightwardsUpX => { Some(position + Uquard(1, 0))},
+            Direction::DownwardsUpY => { Some(position + Uquard(0, 1))},
+            Direction::LeftwardsDownX => { position - Uquard(1, 0)}
+        }?;
+        match self.index(in_front_positon)? {
+            '#' => Some((position, direction.rotate_90cw(), '#')),
+            x => Some((in_front_positon, direction, *x))
+        }
+    }
+    fn loops_at(&self, location: Uquard, direction: Direction, grid:&CharGrid, vec: &mut Vec<(Uquard, Direction)>) -> bool {
+        vec.clear();
+        let mut current_location = location;
+        let mut current_direction = direction;
+        let mut previuse_turns = vec;
+        loop {
+            match grid.next_guard(current_location, current_direction) {
+                None => {return false},
+                Some(next_guard) => {
+                    if next_guard.0 == current_location {
+                        if previuse_turns.contains(&(current_location,current_direction)) {return true;}
+                        previuse_turns.push((current_location,current_direction));
+                        current_direction = next_guard.1;
+                    } else { current_location = next_guard.0; }
+                }
+            }
         }
     }
 }
