@@ -43,7 +43,7 @@ pub fn part1(input: &str) -> usize {
 pub fn part2(input: &str) -> usize {
     let mut grid = CharGrid::new(input);
     let mut running_count = 0;//starting position
-    let mut hash_set_for_treversal_loops = HashSet::with_capacity(400);
+    let mut hash_set_for_treversal_loops = Vec::with_capacity(400);
 
     let guard_intial = grid.chars.iter().enumerate().find(|char| ['^','>','v','<'].contains(char.1)).unwrap();
     let mut guard_position = grid.vec_index_to_uquard(guard_intial.0);
@@ -88,20 +88,22 @@ pub fn part2(input: &str) -> usize {
 }
 
 
-fn traversal_loops(position: Uquard, rotation: char, char_grid: &CharGrid, hash_set: &mut HashSet<(Uquard,char)>) -> bool {
+fn traversal_loops(position: Uquard, rotation: char, char_grid: &CharGrid, hash_set: &mut Vec<(Uquard,char)>) -> bool {
     hash_set.clear();
     let mut current_position = position;
     // println!();
     // print!("initial:({rotation})");
     let mut current_rotation = rotate_90_cw(rotation);
     loop {
-        if !hash_set.insert((current_position,current_rotation)) {
-            return true;
-        }
-        match get_next_guard(current_position, current_rotation, &char_grid) {
+        match get_next_guard(current_position, current_rotation, char_grid) {
             None => { return false; },
             Some(next_guard) => {
                 if next_guard.1 == '#' {
+                    if !hash_set.contains(&(current_position, current_rotation)) {
+                        return true;
+                    } else{
+                        hash_set.push((current_position,current_rotation))
+                    }
                     current_rotation = rotate_90_cw(current_rotation);
                 } else {
                     current_position = next_guard.0;

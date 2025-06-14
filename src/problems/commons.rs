@@ -21,7 +21,7 @@ impl CharGrid {
 
     #[allow(dead_code)]
     pub fn debug_print(&self) {
-        //#[cfg(test)]
+        #[cfg(test)]
         {
             println!();
             for y in 0..self.bounds[1] {
