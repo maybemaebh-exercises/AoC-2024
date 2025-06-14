@@ -5,40 +5,26 @@ pub fn part1(input: &str) -> usize {
     let mut grid = CharGrid::new(input);
     let mut running_count = 1;//starting position
 
-    let guard_intial = grid.chars.iter().enumerate().find(|char| ['^','>','v','<'].contains(char.1)).unwrap();
-    let mut guard_position = grid.vec_index_to_uquard(guard_intial.0);
-    let mut guard_rotation = *guard_intial.1;
-    let guard_index = guard_intial.0;
-    grid.chars[guard_index] = 'X';
+    let mut guard_position = grid.find_initial_guard_location();
+    let mut guard_rotation = Direction::UpwardsDownY;
+    *grid.index_mut(guard_position).unwrap() = 'X';
 
-    'movemnet_loop:loop {
-        let next_guard_postion = get_next_guard_position_mut(guard_position, guard_rotation, &mut grid);
+    loop {
+        let next_guard_postion = grid.next_guard(guard_position, guard_rotation);
         match next_guard_postion {
-            None => break 'movemnet_loop,
+            None => return running_count,
             Some(next_guard) => {
-                if next_guard.1 == &'#' {
-                    guard_rotation = match guard_rotation {
-                        '^' => '>',
-                        '>' => 'v',
-                        'v' => '<',
-                        '<' => '^',
-                        _ => unreachable!()
-                    }
-                } else {
-                    guard_position = next_guard.0;
-                    if next_guard.1 != &'X'{
-                        *next_guard.1 = 'X';
-                        running_count += 1;
-                    }
+                guard_position = next_guard.0;
+                guard_rotation = next_guard.1;
+                if next_guard.2 == '.'{
+                    *grid.index_mut(next_guard.0).unwrap() = 'X';
+                    running_count += 1;
                 }
             }
         }
     }
-    //grid.debug_print();
-    //assert_eq!(running_count, grid.chars.iter().filter(|c| **c == 'X').count());
-    //println!("{:?}",grid.chars);
-    running_count
 }
+
 
 pub fn part2(input: &str) -> usize {
     let mut grid = CharGrid::new(input);
@@ -125,35 +111,6 @@ impl CharGrid {
                 }
             }
         }
-    }
-}
-
-fn get_next_guard(guard_position: Uquard, guard_rotation: char, char_grid: &CharGrid) -> Option<(Uquard, char)> {
-    let next_position = get_next_guard_position(guard_position, guard_rotation);
-    match next_position {
-        None => None,
-        Some(next_position) => {
-            (char_grid.index(next_position)).map(|char| (next_position, *char))
-        }
-    }
-}
-fn get_next_guard_position_mut(guard_position: Uquard, guard_rotation: char, char_grid: &mut CharGrid) -> Option<(Uquard, &mut char)> {
-    let next_position = get_next_guard_position(guard_position, guard_rotation);
-    match next_position {
-        None => None,
-        Some(next_position) => {
-            (char_grid.index_mut(next_position)).map(|char| (next_position, char))
-        }
-    }
-}
-
-fn get_next_guard_position(guard_position: Uquard, guard_rotation: char) -> Option<Uquard> {
-    match guard_rotation {
-        '^' => guard_position - Uquard(0, 1),
-        '>' => Some(guard_position + Uquard(1, 0)),
-        'v' => Some(guard_position + Uquard(0, 1)),
-        '<' => guard_position - Uquard(1, 0),
-        _ => { unreachable!() },
     }
 }
 
