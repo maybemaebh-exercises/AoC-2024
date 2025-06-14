@@ -72,6 +72,19 @@ pub fn part2(input: &str) -> usize {
                         //find if an obstruction here whould cause a loop
                         let test_rotation = guard_rotation;
                         let test_position = guard_position;
+                        let barrier_char = grid.index_mut(next_guard_position).unwrap();
+                        if !(next_guard_position == initial_guard_position) && barrier_char != &'O'{
+                            let old_char = *barrier_char;
+                            *barrier_char = '#';
+                            if traversal_loops(test_position, test_rotation, &grid, &mut hash_set_for_treversal_loops) {
+                                let barrier_char = grid.index_mut(next_guard_position).unwrap();
+                                *barrier_char = 'O';
+                                running_count += 1;
+                            } else {
+                                let barrier_char = grid.index_mut(next_guard_position).unwrap();
+                                *barrier_char = old_char;
+                            }
+                        }
                         if !(next_guard_position == initial_guard_position) && traversal_loops(test_position, test_rotation, &grid, &mut hash_set_for_treversal_loops) {
                             let barrier_char = grid.index_mut(next_guard_position).unwrap();
                             if barrier_char != &'O'{
@@ -115,7 +128,7 @@ fn traversal_loops(position: Uquard, rotation: char, char_grid: &CharGrid, hash_
                 }
             }
         }
-        if hash_set.contains(&(current_position,current_rotation)) || (current_position, current_rotation) == (position, rotation) {
+        if hash_set.contains(&(current_position,current_rotation)) {
             return true;
         }
     }
