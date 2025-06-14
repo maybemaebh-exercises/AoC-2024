@@ -26,7 +26,7 @@ pub fn part1(input: &str) -> usize {
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y-x>=0{grid.index(x as usize,(y-x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
-            (0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(Uquard(x as usize,(y-x)as usize))}else { None }).copied() //check cloned performance
+            (0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(Uquard(x as usize, (y-x)as usize))}else { None }).copied() //check cloned performance
         );
     }
 
@@ -37,7 +37,7 @@ pub fn part1(input: &str) -> usize {
         //println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y+x>=0{grid.index(x as usize,(y+x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
-            (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(Uquard(x as usize,(y+x)as usize))}else { None }).copied() //check cloned performance
+            (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(Uquard(x as usize, (y+x)as usize))}else { None }).copied() //check cloned performance
         );
     }
     // println!("diagonal up:{}", running_total);

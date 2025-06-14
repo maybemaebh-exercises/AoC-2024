@@ -11,8 +11,12 @@ impl CharGrid {
         if quard.0>=self.bounds[0] {None} else {self.chars.get(quard.1*(self.bounds[0]) + quard.0)}
     }
 
+    pub fn index_usize(&self, quard: Uquard) -> usize {
+        (quard.1*(self.bounds[0]) + quard.0)
+    }
+
     pub fn index_mut(&mut self, quard: Uquard) -> Option<&mut char> {
-        if quard.0>=self.bounds[0] {None} else {self.chars.get_mut(quard.1*(self.bounds[0]) + quard.0)}
+        if quard.0>=self.bounds[0] ||quard.1>=self.bounds[1] {None} else {self.chars.get_mut(quard.1*(self.bounds[0]) + quard.0)}
     }
 
     pub fn vec_index_to_uquard(&self, index: usize) -> Uquard {
@@ -21,7 +25,7 @@ impl CharGrid {
 
     #[allow(dead_code)]
     pub fn debug_print(&self) {
-        #[cfg(test)]
+        //#[cfg(test)]
         {
             println!();
             for y in 0..self.bounds[1] {
@@ -34,10 +38,9 @@ impl CharGrid {
     }
 
     pub fn new(input: &str) -> CharGrid {
-        let mut chars: Vec<char> = Vec::with_capacity(input.len());
-        chars.extend(input.chars().filter(|x| !(x==&'\n'||x==&'\r')));
+        let chars: Vec<char> = (input.chars().filter(|x| !(x==&'\n'||x==&'\r'))).collect();
         CharGrid {
-            bounds: [input.lines().next().unwrap().chars().filter(|x| !(x==&'\n'||x==&'\r')).count(), input.lines().count()],
+            bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
             chars
         }
     }
