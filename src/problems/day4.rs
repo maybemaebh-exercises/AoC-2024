@@ -1,3 +1,5 @@
+use crate::problems::commons::{CharGrid, Uquard};
+
 pub fn part1(input: &str) -> usize {
     //println!("{:?}",input.chars().filter(|x| !(x==&'\n'||x==&'\r')).collect::<Vec<_>>());
     let grid = CharGrid::new(input);
@@ -14,7 +16,7 @@ pub fn part1(input: &str) -> usize {
     for x in 0..grid.bounds[0]{
         //println!("{}: {:?}", x,(0..grid.bounds[1]).map(|y| grid.index(x,y)).collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
-            (0..grid.bounds[1]).map(|y| *grid.index(x, y).expect("within bounds"))
+            (0..grid.bounds[1]).map(|y| *grid.index(Uquard(x, y)).expect("within bounds"))
         )
     }
     // println!("vertical:{}", running_total);
@@ -24,7 +26,7 @@ pub fn part1(input: &str) -> usize {
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y-x>=0{grid.index(x as usize,(y-x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
-            (0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(x as usize,(y-x)as usize)}else { None }).copied() //check cloned performance
+            (0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(Uquard(x as usize,(y-x)as usize))}else { None }).copied() //check cloned performance
         );
     }
 
@@ -35,31 +37,12 @@ pub fn part1(input: &str) -> usize {
         //println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y+x>=0{grid.index(x as usize,(y+x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
-            (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(x as usize,(y+x)as usize)}else { None }).copied() //check cloned performance
+            (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(Uquard(x as usize,(y+x)as usize))}else { None }).copied() //check cloned performance
         );
     }
     // println!("diagonal up:{}", running_total);
 
     running_total
-}
-
-struct CharGrid {
-    chars: Vec<char>,
-    bounds: [usize; 2]
-}
-impl CharGrid {
-    fn index(&self, x: usize, y: usize) -> Option<&char> {
-        self.chars.get(y*(self.bounds[0]) + x)//rember 2 char return character
-    }
-
-    fn new(input: &str) -> CharGrid {
-        let mut chars: Vec<char> = Vec::with_capacity(input.len());
-        chars.extend(input.chars().filter(|x| !(x==&'\n'||x==&'\r')));
-        CharGrid {
-            bounds: [input.lines().next().unwrap().chars().filter(|x| !(x==&'\n'||x==&'\r')).count(), input.lines().count()],
-            chars
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -158,15 +141,15 @@ pub fn part2(input: &str) -> usize {
         // ));
 
         for occorence in (OccorencesIterator {
-            line: (0..grid.bounds[0] as i32).map(|x| if y - x >= 0 {grid.index(x as usize, (y - x) as usize) } else { None }).map(|x| x.copied()), //check cloned performance
+            line: (0..grid.bounds[0] as i32).map(|x| if y - x >= 0 {grid.index(Uquard(x as usize, (y - x) as usize)) } else { None }).map(|x| x.copied()), //check cloned performance
             search_indexs: [0, 0],
             search_term,
             position: 0
         }) {
             let (x,y) = (occorence, y as usize - occorence);
             //print!("Center:{},({},{}) ", grid.index(x as usize, y as usize).unwrap(),x,y);
-            let top_right = grid.index(x+1, y+1);
-            let bottom_left = grid.index(x-1, y-1);
+            let top_right = grid.index(Uquard(x+1, y+1));
+            let bottom_left = grid.index(Uquard(x-1, y-1));
             if (top_right == Some(&search_term.0[0]) && bottom_left == Some(&search_term.0[2])) || (top_right == Some(&search_term.0[2]) && bottom_left == Some(&search_term.0[0])) {
                 //println!(",Passes");
                 running_total += 1;
@@ -183,7 +166,7 @@ const TEST_INPUT:&str =  include_str!("day4_test.txt");
 
 #[cfg(test)]
 mod tests {
-    use crate::problems::day4::{part1, part2, TEST_INPUT, SearchTerm};
+    use crate::problems::day4::{part1, part2, SearchTerm, TEST_INPUT};
 
     #[test]
     fn day4_part1() {

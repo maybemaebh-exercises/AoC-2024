@@ -34,7 +34,7 @@ use regex::Regex;
 mod problems;
 mod allocation_track;
 
-const BENCHMARK_TIMES:u32 = 1000;
+const BENCHMARK_TIMES:u32 = 1;
 include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 
 macro_rules! benchmark_problem_part {
@@ -114,6 +114,7 @@ fn main() {
     tbody.push_str(&table_row!(day3,allocation_size_receive));
     tbody.push_str(&table_row!(day4,allocation_size_receive));
     tbody.push_str(&table_row!(day5,allocation_size_receive));
+    tbody.push_str(&table_row!(day6,allocation_size_receive));
 
     tbody.push_str("\n</tbody>");
 

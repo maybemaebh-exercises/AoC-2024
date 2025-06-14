@@ -62,7 +62,7 @@ pub fn part2(input: &str) -> usize {
         //println!("{:?} -> {:?}", page_list, sorted_page_list);
         //println!("{:?}",sorted_page_list);
         if !check_valid(&page_list){
-            sort_with_partialord(&mut *page_list);
+            sort_with_partialord(&mut page_list);
             running_total += page_list[page_list.len()/2].0;
         }
 
@@ -85,7 +85,7 @@ fn check_valid(page_list:&Vec<PageNum>) -> bool {
 
 //Slightly (50 micro-seconds) faster than algo off internet
 #[allow(dead_code)]
-pub fn sort_with_partialord<T: PartialOrd + Debug>(mut items: &mut [T]) { 
+pub fn sort_with_partialord<T: PartialOrd + Debug>(items: &mut [T]) { 
     //println!("start:");
     'next_value: for sorted_len in 1..items.len(){
         //println!("{:?}",items);
