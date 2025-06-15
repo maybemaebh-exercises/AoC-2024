@@ -94,7 +94,7 @@ impl CharGrid {
             x => Some((in_front_positon, direction, *x))
         }
     }
-    fn loops_at(&self, location: Uquard, direction: Direction, grid:&CharGrid, vec: &mut Vec<(Uquard, Direction)>) -> bool {
+    fn loops_at(&self, location: Uquard, direction: Direction, grid:&CharGrid, vec: &mut HashSet<(Uquard, Direction)>) -> bool {
         vec.clear();
         let mut current_location = location;
         let mut current_direction = direction;
@@ -105,7 +105,7 @@ impl CharGrid {
                 Some(next_guard) => {
                     if next_guard.0 == current_location {
                         if previuse_turns.contains(&(current_location,current_direction)) {return true;}
-                        previuse_turns.push((current_location,current_direction));
+                        previuse_turns.insert((current_location,current_direction));
                         current_direction = next_guard.1;
                     } else { current_location = next_guard.0; }
                 }
