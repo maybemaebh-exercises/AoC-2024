@@ -34,7 +34,7 @@ use regex::Regex;
 mod problems;
 mod allocation_track;
 
-const BENCHMARK_TIMES:u32 = 10;
+const BENCHMARK_TIMES:u32 = 100;
 include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 
 macro_rules! benchmark_problem_part {

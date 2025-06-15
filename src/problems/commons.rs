@@ -1,4 +1,4 @@
-use std::hash::{Hash, Hasher};
+use std::hash::{Hash};
 use std::ops::{Add, Sub};
 
 pub struct CharGrid {

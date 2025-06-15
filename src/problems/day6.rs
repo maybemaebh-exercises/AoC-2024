@@ -32,7 +32,8 @@ pub fn part2(input: &str) -> usize {
     let mut current_position = grid.find_initial_guard_location();
     let initial_guard_position = current_position;
     let mut current_direction = Direction::UpwardsDownY;
-    let mut vec_for_loops_at = Vec::with_capacity(40);
+    //atemt to estimate max length of loop turns
+    let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.1033687572171522810942245886417e-6) as usize);
 
     loop{
         match grid.next_guard(current_position, current_direction) {
@@ -57,8 +58,7 @@ pub fn part2(input: &str) -> usize {
     }
 }
 
-#[derive(Debug,Clone,Copy)]
-#[derive(PartialEq)]
+#[derive(Debug,Clone,Copy, Ord, PartialOrd, Eq, PartialEq, Hash)]
 enum Direction{
     UpwardsDownY,
     RightwardsUpX,
@@ -98,7 +98,7 @@ impl CharGrid {
         vec.clear();
         let mut current_location = location;
         let mut current_direction = direction;
-        let mut previuse_turns = vec;
+        let previuse_turns = vec;
         loop {
             match grid.next_guard(current_location, current_direction) {
                 None => {return false},
