@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-use std::ptr::hash;
 use ahash::{HashSet, HashSetExt};
 use crate::problems::commons::{CharGrid, Uquard};
 use rayon::prelude::*;
