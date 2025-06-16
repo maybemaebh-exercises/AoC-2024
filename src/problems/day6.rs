@@ -153,7 +153,7 @@ impl CharGrid {
     }
     fn next_guard(&self, position: Uquard, direction: Direction, barrier: Option<Uquard>) -> Option<(Uquard, Direction, char)> {
         let in_front_positon = Self::in_front_postion(direction,position)?;
-        //if Some(in_front_positon) == barrier {return Some((position, direction.rotate_90cw(), '#'))};
+        if Some(in_front_positon) == barrier {return Some((position, direction.rotate_90cw(), '#'))};
         match self.index(in_front_positon)? {
             '#' => Some((position, direction.rotate_90cw(), '#')),
             x => Some((in_front_positon, direction, *x))
