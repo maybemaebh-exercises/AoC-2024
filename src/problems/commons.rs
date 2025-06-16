@@ -1,16 +1,18 @@
 use std::hash::{Hash};
 use std::ops::{Add, Sub};
+use ascii::{AsAsciiStr, AsciiChar, AsciiString};
+//use ascii::*;
 
 #[derive(Clone)]
 pub struct CharGrid {
-    pub chars: Vec<char>,
+    pub chars: AsciiString,
     pub bounds: [usize; 2]
 }
 
 
 
 impl CharGrid {
-    pub fn index(&self, quard: Uquard) -> Option<&char> {
+    pub fn index(&self, quard: Uquard) -> Option<&AsciiChar> {
         self.index_usize(quard).map(|index| &self.chars[index])
     }
 
@@ -19,7 +21,7 @@ impl CharGrid {
         if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]) + quard.0)}
     }
 
-    pub fn index_mut(&mut self, quard: Uquard) -> Option<&mut char> {
+    pub fn index_mut(&mut self, quard: Uquard) -> Option<&mut AsciiChar> {
         self.index_usize(quard).map(|index| &mut self.chars[index])
     }
 
@@ -42,8 +44,9 @@ impl CharGrid {
     }
 
     pub fn new(input: &str) -> CharGrid {
-        let mut chars = Vec::with_capacity(input.len());
-        chars.extend(input.chars().filter(|x| !(x==&'\n'||x==&'\r')));
+        let input = input.as_ascii_str().unwrap();
+        let mut chars = AsciiString::with_capacity(input.len());
+        chars.extend(input.chars().filter(|char| !(char ==&'\n'|| char ==&'\r')));
         CharGrid {
             bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
             chars

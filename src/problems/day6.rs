@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use ahash::{HashSet, HashSetExt};
+use ascii::AsciiChar;
 use crate::problems::commons::{CharGrid, Uquard};
 use rayon::prelude::*;
 
@@ -9,7 +10,7 @@ pub fn part1(input: &str) -> usize {
 
     let mut guard_position = grid.find_initial_guard_location();
     let mut guard_rotation = Direction::UpwardsDownY;
-    *grid.index_mut(guard_position).unwrap() = 'X';
+    *grid.index_mut(guard_position).unwrap() = AsciiChar::X;
 
     loop {
         let next_guard_postion = grid.next_guard(guard_position, guard_rotation, None);
@@ -19,7 +20,7 @@ pub fn part1(input: &str) -> usize {
                 guard_position = next_guard.0;
                 guard_rotation = next_guard.1;
                 if next_guard.2 == '.'{
-                    *grid.index_mut(next_guard.0).unwrap() = 'X';
+                    *grid.index_mut(next_guard.0).unwrap() = AsciiChar::X;
                     running_count += 1;
                 }
             }
@@ -42,15 +43,15 @@ pub fn part2(input: &str) -> usize {
             None => {return running_count;},
             Some(next_guard) => {
                 let currenct_char = grid.index_mut(current_position).unwrap();
-                if currenct_char != &'O' {*currenct_char = 'V'}
-                if next_guard.0 != current_position && next_guard.2 != 'V' && next_guard.2 != 'O'&& next_guard.0 != initial_guard_position {
+                if currenct_char != &'O' {*currenct_char = AsciiChar::V}
+                if next_guard.0 != current_position && next_guard.2 != AsciiChar::V && next_guard.2 != AsciiChar::O&& next_guard.0 != initial_guard_position {
                     //assert_eq!(next_guard.2,'.');
-                    *grid.index_mut(next_guard.0).unwrap() = '#';
+                    *grid.index_mut(next_guard.0).unwrap() = AsciiChar::Hash;
                     if grid.loops_at(current_position, current_direction, None, &mut hashset_for_loops_at) {
-                        *grid.index_mut(next_guard.0).unwrap() = 'O';
+                        *grid.index_mut(next_guard.0).unwrap() = AsciiChar::O;
                         running_count += 1;
                     } else {
-                        *grid.index_mut(next_guard.0).unwrap() = '.';
+                        *grid.index_mut(next_guard.0).unwrap() = AsciiChar::Dot;
                     }
                 }
                 current_position = next_guard.0;
@@ -107,11 +108,11 @@ impl Iterator for GuardPermutationsToCheckForLoopsIter {
         // println!("{current_position:?}");
         let next_guard =  self.grid.next_guard(self.current_position, self.current_direction, None)?;
         let currenct_char = self.grid.index_mut(self.current_position).unwrap();
-        *currenct_char = 'V';
+        *currenct_char = AsciiChar::V;
         let (last_position,last_diretion) = (self.current_position, self.current_direction);
         (self.current_position, self.current_direction, _) = next_guard;
         // println!("{next_guard:?}");
-        if next_guard.0 != last_position && next_guard.2 != 'V' && next_guard.0 != self.initial_guard_position {
+        if next_guard.0 != last_position && next_guard.2 != AsciiChar::V && next_guard.0 != self.initial_guard_position {
 
             return Some((last_position, last_diretion));
         }
@@ -140,7 +141,7 @@ impl Direction {
 
 impl CharGrid {
     fn find_initial_guard_location(&self) -> Uquard {
-        let index = self.chars.iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
+        let index = self.chars.into_iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
         self.vec_index_to_uquard(index)
     }
     fn in_front_postion(direction: Direction, position:Uquard) -> Option<Uquard> {
@@ -151,12 +152,12 @@ impl CharGrid {
             Direction::LeftwardsDownX => { position - Uquard(1, 0)}
         }
     }
-    fn next_guard(&self, position: Uquard, direction: Direction, barrier: Option<Uquard>) -> Option<(Uquard, Direction, char)> {
+    fn next_guard(&self, position: Uquard, direction: Direction, barrier: Option<Uquard>) -> Option<(Uquard, Direction, AsciiChar)> {
         let in_front_positon = Self::in_front_postion(direction,position)?;
-        if Some(in_front_positon) == barrier {return Some((position, direction.rotate_90cw(), '#'))};
+        if Some(in_front_positon) == barrier {return Some((position, direction.rotate_90cw(), AsciiChar::Hash))};
         match self.index(in_front_positon)? {
-            '#' => Some((position, direction.rotate_90cw(), '#')),
-            x => Some((in_front_positon, direction, *x))
+            AsciiChar::Hash => Some((position, direction.rotate_90cw(), AsciiChar::Hash)),
+            char => Some((in_front_positon, direction, *char))
         }
     }
 
