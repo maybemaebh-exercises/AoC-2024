@@ -1,6 +1,7 @@
 use std::hash::{Hash};
 use std::ops::{Add, Sub};
 
+#[derive(Clone)]
 pub struct CharGrid {
     pub chars: Vec<char>,
     pub bounds: [usize; 2]
