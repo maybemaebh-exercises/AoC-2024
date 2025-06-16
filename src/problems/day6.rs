@@ -63,6 +63,7 @@ pub fn part2(input: &str) -> usize {
 
 
 pub fn part2_multithread(input: &str) -> usize {
+    let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();//adds 33% to time but is only fare
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
