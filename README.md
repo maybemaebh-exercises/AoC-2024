@@ -4,6 +4,7 @@
       <th rowspan="2">Day</th>
       <th rowspan="2">Name</th>
       <th colspan="2">Input</th>
+      <th rowspan="2">multithreaded</th>
       <th colspan="4">Part 1</th>
       <th colspan="4">Part 2</th>
     </tr>
@@ -22,73 +23,93 @@
 <tr>
 <th>1</th>
 <th>Historian Hysteria</th>
-<td>244.5µs</td>
+<td>214.3µs</td>
 <td>14000b</td>
-<td>78.799µs</td>
+<th>❌</th>
+<td>78.613µs</td>
 <td>24080b</td><td>4</td>
 <td>1223326</td>
-<td>83.624µs</td>
+<td>82.343µs</td>
 <td>24080b</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>201.8µs</td>
+<td>166.6µs</td>
 <td>19397b</td>
-<td>83.612µs</td>
+<th>❌</th>
+<td>84.859µs</td>
 <td>0b</td><td>0</td>
 <td>334</td>
-<td>224.222µs</td>
+<td>222.14µs</td>
 <td>0b</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>251.1µs</td>
+<td>225.6µs</td>
 <td>17161b</td>
-<td>41.656µs</td>
+<th>❌</th>
+<td>40.255µs</td>
 <td>0b</td><td>0</td>
 <td>165225049</td>
-<td>67.861µs</td>
+<td>70.348µs</td>
 <td>152b</td><td>5</td>
 <td>108830766</td>
 </tr>
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>187.4µs</td>
+<td>154.6µs</td>
 <td>19740b</td>
-<td>644.332µs</td>
+<th>❌</th>
+<td>662.381µs</td>
 <td>78968b</td><td>1</td>
 <td>2514</td>
-<td>361.124µs</td>
+<td>322.866µs</td>
 <td>78968b</td><td>1</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>177.9µs</td>
+<td>191.1µs</td>
 <td>16315b</td>
-<td>457.13µs</td>
+<th>❌</th>
+<td>472.913µs</td>
 <td>52040b</td><td>2</td>
 <td>5268</td>
-<td>584.333µs</td>
+<td>586.043µs</td>
 <td>52040b</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>220.1µs</td>
+<td>178.3µs</td>
 <td>17030b</td>
-<td>75.991µs</td>
+<th>❌</th>
+<td>62.324µs</td>
 <td>68128b</td><td>1</td>
 <td>5534</td>
-<td>29.374544ms</td>
+<td>25.0389ms</td>
 <td>80960b</td><td>2</td>
+<td>2262</td>
+</tr>
+<tr>
+<th>"</th>
+<th>"</th>
+<th>"</th>
+<th>"</th>
+<th>✅</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<td>3.165123ms</td>
+<td>135776b</td><td>3</td>
 <td>2262</td>
 </tr>
 </tbody>

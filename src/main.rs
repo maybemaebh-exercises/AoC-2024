@@ -69,7 +69,7 @@ macro_rules! allocations_problem_part {
 }
 
 macro_rules! table_row {
-    ($d:ident, $alloc_reciver:ident) => {{
+    ($d:ident, $alloc_reciver:ident, $part1_mutlithreaded:tt, $part2_mutlithreaded:tt) => {{
         let mut tr = String::new();
         let day_string = stringify!($d);
         let day_num:String = day_string.chars().filter(|x| x.is_numeric()).collect();
@@ -88,6 +88,8 @@ macro_rules! table_row {
         tr.push_str(&format!("\n<td>{:?}</td>",load_time));
         tr.push_str(&format!("\n<td>{}b</td>",input_len));
 
+        tr.push_str("\n<th>❌</th>");
+
         tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1,input)));
         let allocations = allocations_problem_part!($d,part1,input,$alloc_reciver);
         tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
@@ -99,8 +101,60 @@ macro_rules! table_row {
         tr.push_str(&format!("\n<td>{}</td>",problems::$d::part2(&input)));
 
         tr.push_str("\n</tr>");
+        
+        #[allow(clippy::eq_op)]
+        if $part1_mutlithreaded || $part2_mutlithreaded {
+            tr.push_str("\n<tr>");
+
+            tr.push_str("\n<th>\"</th>");
+            tr.push_str("\n<th>\"</th>");
+            tr.push_str("\n<th>\"</th>");
+            tr.push_str("\n<th>\"</th>");
+            tr.push_str("\n<th>✅</th>");
+            conditionally_expand!{$part1_mutlithreaded,
+                {tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1_multithread,input)));
+                let allocations = allocations_problem_part!($d,part1_multithread,input,$alloc_reciver);
+                tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+                tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1_multithread(&input)));}
+            } ;
+            if !$part1_mutlithreaded {
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+            }
+            conditionally_expand!{$part2_mutlithreaded,
+                {tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part2_multithread,input)));
+                let allocations = allocations_problem_part!($d,part2_multithread,input,$alloc_reciver);
+                tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+                tr.push_str(&format!("\n<td>{}</td>",problems::$d::part2_multithread(&input)));}
+            };
+            if !$part2_mutlithreaded {
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+                tr.push_str("\n<th></th>");
+            }
+
+            tr.push_str("\n</tr>");
+        }
+
         tr
     }}
+}
+
+macro_rules! conditionally_expand {
+    {
+        true,
+        $fragment:block
+    } => {
+        $fragment
+    };
+    {
+        false,
+        $fragment:block
+    } => {
+    };
 }
 
 fn main() {
@@ -109,12 +163,13 @@ fn main() {
     allocation_track::AllocationRegistry::set_global_tracker(allocation_track::StdoutTracker::new(allocation_size_send))
     .expect("no other global tracker should be set yet");
 
-    tbody.push_str(&table_row!(day1,allocation_size_receive));
-    tbody.push_str(&table_row!(day2,allocation_size_receive));
-    tbody.push_str(&table_row!(day3,allocation_size_receive));
-    tbody.push_str(&table_row!(day4,allocation_size_receive));
-    tbody.push_str(&table_row!(day5,allocation_size_receive));
-    tbody.push_str(&table_row!(day6,allocation_size_receive));
+
+    tbody.push_str(&table_row!(day1,allocation_size_receive,false,false));
+    tbody.push_str(&table_row!(day2,allocation_size_receive,false,false));
+    tbody.push_str(&table_row!(day3,allocation_size_receive,false,false));
+    tbody.push_str(&table_row!(day4,allocation_size_receive,false,false));
+    tbody.push_str(&table_row!(day5,allocation_size_receive,false,false));
+    tbody.push_str(&table_row!(day6,allocation_size_receive,false,true));
 
     tbody.push_str("\n</tbody>");
 
