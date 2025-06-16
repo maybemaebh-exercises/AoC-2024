@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::ptr::hash;
 use ahash::{HashSet, HashSetExt};
 use crate::problems::commons::{CharGrid, Uquard};
 use rayon::prelude::*;
@@ -29,6 +30,7 @@ pub fn part1(input: &str) -> usize {
 
 
 pub fn part2(input: &str) -> usize {
+    let mut hashset_for_loops_at:HashSet<(Uquard, Direction)> = HashSet::with_capacity(400);
     let mut grid = CharGrid::new(input);
     let mut running_count = 0;//starting position
     let mut current_position = grid.find_initial_guard_location();
@@ -45,7 +47,7 @@ pub fn part2(input: &str) -> usize {
                 if next_guard.0 != current_position && next_guard.2 != 'V' && next_guard.2 != 'O'&& next_guard.0 != initial_guard_position {
                     //assert_eq!(next_guard.2,'.');
                     *grid.index_mut(next_guard.0).unwrap() = '#';
-                    if grid.loops_at(current_position, current_direction, &grid, None) {
+                    if grid.loops_at(current_position, current_direction, None, &mut hashset_for_loops_at) {
                         *grid.index_mut(next_guard.0).unwrap() = 'O';
                         running_count += 1;
                     } else {
@@ -59,11 +61,12 @@ pub fn part2(input: &str) -> usize {
     }
 }
 
-thread_local! {
-    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
-}
+
 
 pub fn part2_multithread(input: &str) -> usize {
+    thread_local! {
+    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    }
     let grid = CharGrid::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
@@ -73,7 +76,9 @@ pub fn part2_multithread(input: &str) -> usize {
     //     println!("{permutation:?}")
     // }
     iter.par_bridge().into_par_iter().filter(|x|
-        grid.loops_at(x.0, x.1, &grid, Some(CharGrid::in_front_postion(x.1,x.0).expect("has been given as a permutation")))
+        HASHSET_FOR_LOOPS_AT.with_borrow_mut(|hash_set|
+            grid.loops_at(x.0, x.1,  Some(CharGrid::in_front_postion(x.1,x.0).expect("has been given as a permutation")), hash_set)
+        )
     ).count()
 }
 
@@ -155,17 +160,17 @@ impl CharGrid {
         }
     }
 
-    fn loops_at(&self, location: Uquard, direction: Direction, grid:&CharGrid,  barrier: Option<Uquard>) -> bool {
-        HASHSET_FOR_LOOPS_AT.with_borrow_mut(|x|x.clear());
+    fn loops_at(&self, location: Uquard, direction: Direction, barrier: Option<Uquard>, previus_turns: &mut HashSet<(Uquard, Direction)>) -> bool {
+        previus_turns.clear();
         let mut current_location = location;
         let mut current_direction = direction;
         loop {
-            match grid.next_guard(current_location, current_direction, barrier) {
+            match self.next_guard(current_location, current_direction, barrier) {
                 None => {return false},
                 Some(next_guard) => {
                     if next_guard.0 == current_location {
-                        if HASHSET_FOR_LOOPS_AT.with_borrow(|x|x.contains(&(current_location,current_direction))) {return true;}
-                        HASHSET_FOR_LOOPS_AT.with_borrow_mut(|x|x.insert((current_location,current_direction)));
+                        if previus_turns.contains(&(current_location,current_direction)) {return true;}
+                        previus_turns.insert((current_location,current_direction));
                         current_direction = next_guard.1;
                     } else { current_location = next_guard.0; }
                 }
