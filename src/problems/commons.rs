@@ -12,21 +12,21 @@ pub struct CharGrid {
 
 
 impl CharGrid {
-    pub fn index(&self, quard: Uquard) -> Option<&AsciiChar> {
+    pub fn index(&self, quard: Ucoord) -> Option<&AsciiChar> {
         self.index_usize(quard).map(|index| &self.chars[index])
     }
 
     #[allow(dead_code)]
-    pub fn index_usize(&self, quard: Uquard) -> Option<usize> {
+    pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
         if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]) + quard.0)}
     }
 
-    pub fn index_mut(&mut self, quard: Uquard) -> Option<&mut AsciiChar> {
+    pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut AsciiChar> {
         self.index_usize(quard).map(|index| &mut self.chars[index])
     }
 
-    pub fn vec_index_to_uquard(&self, index: usize) -> Uquard {
-        Uquard(index % self.bounds[0], index / self.bounds[0])
+    pub fn vec_index_to_uquard(&self, index: usize) -> Ucoord {
+        Ucoord(index % self.bounds[0], index / self.bounds[0])
     }
 
     #[allow(dead_code)]
@@ -55,14 +55,14 @@ impl CharGrid {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Uquard(pub usize, pub usize);
-#[derive(Debug, Clone, Copy, Hash)]
-pub struct Iquard(pub i32, pub i32);
+pub struct Ucoord(pub usize, pub usize);
+// #[derive(Debug, Clone, Copy, Hash)]
+// pub struct Iquard(pub i32, pub i32);
 
-impl Add for Uquard {
+impl Add for Ucoord {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        Uquard(self.0+rhs.0, self.1+rhs.1)
+        Ucoord(self.0+rhs.0, self.1+rhs.1)
     }
 
 }
@@ -73,11 +73,11 @@ impl Add for Uquard {
 //     }
 // }
 
-impl Sub for Uquard {
+impl Sub for Ucoord {
     type Output = Option<Self>;
     fn sub(self, rhs: Self) -> Self::Output {
         if self.0>=rhs.0 && self.1>=rhs.1 {
-            Some(Uquard(self.0-rhs.0, self.1-rhs.1))
+            Some(Ucoord(self.0-rhs.0, self.1-rhs.1))
         } else { None }
     }
 }
@@ -87,10 +87,10 @@ impl Sub for Uquard {
 //         self.0==other.0 && self.1==other.1
 //     }
 // }
-impl Add for Iquard {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self::Output {
-        Iquard(self.0+rhs.0, self.1+rhs.1)
-    }
-
-}
+// impl Add for Iquard {
+//     type Output = Self;
+//     fn add(self, rhs: Self) -> Self::Output {
+//         Iquard(self.0+rhs.0, self.1+rhs.1)
+//     }
+//
+// }

@@ -5,7 +5,7 @@ use std::thread;
 use std::thread::JoinHandle;
 use ahash::{HashSet, HashSetExt};
 use ascii::AsciiChar;
-use crate::problems::commons::{CharGrid, Uquard};
+use crate::problems::commons::{CharGrid, Ucoord};
 use rayon::prelude::*;
 use tinyvec::*;
 
@@ -35,7 +35,7 @@ pub fn part1(input: &str) -> usize {
 
 
 pub fn part2(input: &str) -> usize {
-    let mut hashset_for_loops_at:HashSet<(Uquard, Direction)> = HashSet::with_capacity(400);
+    let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(400);
     let mut grid = CharGrid::new(input);
     let mut running_count = 0;//starting position
     let mut current_position = grid.find_initial_guard_location();
@@ -71,7 +71,7 @@ pub fn part2(input: &str) -> usize {
 pub fn part2_multithread_rayon(input: &str) -> usize {
     let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();//adds 33% to time but is only fare
     thread_local! {
-    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
     let grid = CharGrid::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
@@ -90,7 +90,7 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
 
 pub fn part2_multithread(input: &str) -> usize {
     thread_local! {
-    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
     let grid = Arc::new(CharGrid::new(input));
     let initial_guard_position = grid.find_initial_guard_location();
@@ -130,12 +130,12 @@ pub fn part2_multithread(input: &str) -> usize {
 
 struct GuardPermutationsToCheckForLoopsIter  {
     grid: CharGrid,
-    current_position: Uquard,
-    initial_guard_position: Uquard,
+    current_position: Ucoord,
+    initial_guard_position: Ucoord,
     current_direction: Direction,
 }
 impl GuardPermutationsToCheckForLoopsIter{
-    fn new(initial_guard_position:Uquard, char_grid: &CharGrid) -> Self {
+    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid) -> Self {
         GuardPermutationsToCheckForLoopsIter {
             grid: char_grid.clone(),
             current_position: initial_guard_position,
@@ -146,7 +146,7 @@ impl GuardPermutationsToCheckForLoopsIter{
 }
 
 impl Iterator for GuardPermutationsToCheckForLoopsIter {
-    type Item = (Uquard, Direction);//Uquard is postion of the Guard not barrirer!!
+    type Item = (Ucoord, Direction);//Uquard is postion of the Guard not barrirer!!
     fn next(&mut self) -> Option<Self::Item> {
         // let current_position = self.current_position;
         // println!("{current_position:?}");
@@ -184,19 +184,19 @@ impl Direction {
 }
 
 impl CharGrid {
-    fn find_initial_guard_location(&self) -> Uquard {
+    fn find_initial_guard_location(&self) -> Ucoord {
         let index = self.chars.into_iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
         self.vec_index_to_uquard(index)
     }
-    fn in_front_postion(direction: Direction, position:Uquard) -> Option<Uquard> {
+    fn in_front_postion(direction: Direction, position: Ucoord) -> Option<Ucoord> {
         match direction {
-            Direction::UpwardsDownY => { position - Uquard(0, 1)},
-            Direction::RightwardsUpX => { Some(position + Uquard(1, 0))},
-            Direction::DownwardsUpY => { Some(position + Uquard(0, 1))},
-            Direction::LeftwardsDownX => { position - Uquard(1, 0)}
+            Direction::UpwardsDownY => { position - Ucoord(0, 1)},
+            Direction::RightwardsUpX => { Some(position + Ucoord(1, 0))},
+            Direction::DownwardsUpY => { Some(position + Ucoord(0, 1))},
+            Direction::LeftwardsDownX => { position - Ucoord(1, 0)}
         }
     }
-    fn next_guard(&self, position: Uquard, direction: Direction, barrier: Option<Uquard>) -> Option<(Uquard, Direction, AsciiChar)> {
+    fn next_guard(&self, position: Ucoord, direction: Direction, barrier: Option<Ucoord>) -> Option<(Ucoord, Direction, AsciiChar)> {
         let in_front_positon = Self::in_front_postion(direction,position)?;
         if Some(in_front_positon) == barrier {return Some((position, direction.rotate_90cw(), AsciiChar::Hash))};
         match self.index(in_front_positon)? {
@@ -205,7 +205,7 @@ impl CharGrid {
         }
     }
 
-    fn loops_at(&self, location: Uquard, direction: Direction, barrier: Option<Uquard>, previus_turns: &mut HashSet<(Uquard, Direction)>) -> bool {
+    fn loops_at(&self, location: Ucoord, direction: Direction, barrier: Option<Ucoord>, previus_turns: &mut HashSet<(Ucoord, Direction)>) -> bool {
         previus_turns.clear();
         let mut current_location = location;
         let mut current_direction = direction;
