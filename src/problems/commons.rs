@@ -76,7 +76,7 @@ impl CharGrid<&AsciiStr> {
         if input.chars().any(|char| char == '\r') {newline_lengh += 1}
         CharGrid {
             bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
-            chars: input.into(),
+            chars: input,
             newline_lengh,
         }
     }
