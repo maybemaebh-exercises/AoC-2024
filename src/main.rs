@@ -27,9 +27,9 @@ const PROBLEM_NAMES: [&str; 25] = [
 ];
 
 use std::fs;
-use std::sync::mpsc;
 use std::time::{Duration, Instant};
 use regex::Regex;
+use size::Size;
 
 mod problems;
 
@@ -55,7 +55,7 @@ macro_rules! allocations_problem_part {
         #[cfg(debug_assertions)]
         println!(stringify!($part));
         let allocations_info = allocation_counter::measure(||{problems::$d::$part(&$input);});
-        (allocations_info.bytes_max, allocations_info.count_total)
+        (Size::from_bytes(allocations_info.bytes_max), allocations_info.count_total)
     }};
 }
 
@@ -77,18 +77,18 @@ macro_rules! table_row {
         tr.push_str(&format!("\n<th>{}</th>",PROBLEM_NAMES[day_num-1]));
 
         tr.push_str(&format!("\n<td>{:?}</td>",load_time));
-        tr.push_str(&format!("\n<td>{}b</td>",input_len));
+        tr.push_str(&format!("\n<td>{}</td>",Size::from_bytes(input_len)));
 
         tr.push_str("\n<th>❌</th>");
 
         tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1,input)));
         let allocations = allocations_problem_part!($d,part1,input);
-        tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+        tr.push_str(&format!("\n<td>{}</td><td>{:?}</td>", allocations.0, allocations.1));//asuming size in bytes
         tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1(&input)));
 
         tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part2,input)));
         let allocations = allocations_problem_part!($d,part2,input);
-        tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));
+        tr.push_str(&format!("\n<td>{}</td><td>{:?}</td>", allocations.0, allocations.1));
         tr.push_str(&format!("\n<td>{}</td>",problems::$d::part2(&input)));
 
         tr.push_str("\n</tr>");
@@ -105,7 +105,7 @@ macro_rules! table_row {
             conditionally_expand!{$part1_mutlithreaded,
                 {tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part1_multithread,input)));
                 let allocations = allocations_problem_part!($d,part1_multithread,input);
-                tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+                tr.push_str(&format!("\n<td>{}</td><td>{:?}</td>",  allocations.0, allocations.1));//asuming size in bytes
                 tr.push_str(&format!("\n<td>{}</td>",problems::$d::part1_multithread(&input)));}
             } ;
             if !$part1_mutlithreaded {
@@ -118,7 +118,7 @@ macro_rules! table_row {
                 {tr.push_str(&format!("\n<td>{:?}</td>",benchmark_problem_part!($d,part2_multithread,input)));
                 //let allocations = (0,0);
                 let allocations = allocations_problem_part!($d,part2_multithread,input);
-                tr.push_str(&format!("\n<td>{:?}b</td><td>{:?}</td>", allocations.0,allocations.1));//asuming size in bytes
+                tr.push_str(&format!("\n<td>{}</td><td>{:?}</td>",  allocations.0, allocations.1));//asuming size in bytes
                 tr.push_str(&format!("\n<td>{}</td>",problems::$d::part2_multithread(&input)));}
             };
             if !$part2_mutlithreaded {
