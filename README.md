@@ -4,7 +4,7 @@
       <th rowspan="2">Day</th>
       <th rowspan="2">Name</th>
       <th colspan="2">Input</th>
-      <th rowspan="2">multithreaded</th>
+      <th rowspan="2">🔢🧵</th>
       <th colspan="4">Part 1</th>
       <th colspan="4">Part 2</th>
     </tr>
