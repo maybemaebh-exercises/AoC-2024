@@ -1,8 +1,13 @@
 use std::cell::RefCell;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::AtomicUsize;
+use std::thread;
+use std::thread::JoinHandle;
 use ahash::{HashSet, HashSetExt};
 use ascii::AsciiChar;
 use crate::problems::commons::{CharGrid, Uquard};
 use rayon::prelude::*;
+use tinyvec::*;
 
 pub fn part1(input: &str) -> usize {
     let mut grid = CharGrid::new(input);
@@ -62,8 +67,8 @@ pub fn part2(input: &str) -> usize {
 }
 
 
-
-pub fn part2_multithread(input: &str) -> usize {
+#[allow(dead_code)]
+pub fn part2_multithread_rayon(input: &str) -> usize {
     let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();//adds 33% to time but is only fare
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
@@ -83,6 +88,45 @@ pub fn part2_multithread(input: &str) -> usize {
     ).count()
 }
 
+pub fn part2_multithread(input: &str) -> usize {
+    thread_local! {
+    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Uquard, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    }
+    let grid = Arc::new(CharGrid::new(input));
+    let initial_guard_position = grid.find_initial_guard_location();
+    let running_count = Arc::new(AtomicUsize::new(0));
+    //atemt to estimate max length of loop turns
+    //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
+    let iter = Arc::new(Mutex::new(GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,&grid)));
+    // for permutation in iter {
+    //     println!("{permutation:?}")
+    // }
+    let mut threads:TinyVec<[Option<JoinHandle<_>>; 64]> = TinyVec::new();
+    for _ in 0..std::thread::available_parallelism().unwrap().get() {
+        threads.push(
+            Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
+                thread::spawn(move || {
+                    loop {
+                        let next = iter.lock().unwrap().next();
+                        match next {
+                            None => {return;},
+                            Some(next_guard) => {
+                                if HASHSET_FOR_LOOPS_AT.with_borrow_mut(|hash_set|
+                                    grid.loops_at(next_guard.0, next_guard.1,  Some(CharGrid::in_front_postion(next_guard.1,next_guard.0).expect("has been given as a permutation")), hash_set)
+                                ) {running_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);}
+                            }
+                        }
+                    }
+                })})
+        );
+    }
+    //let threads = threads.into_iter().map(|x|x.unwrap().join().unwrap());
+    for thread in threads {
+        thread.unwrap().join().unwrap();
+    }
+    //println!("Running threads: {:?}", threads);
+    running_count.load(std::sync::atomic::Ordering::SeqCst)
+}
 
 struct GuardPermutationsToCheckForLoopsIter  {
     grid: CharGrid,
@@ -184,7 +228,7 @@ impl CharGrid {
 const TEST_INPUT: &str = include_str!("day6_test.txt");
 #[cfg(test)]
 mod tests {
-    use crate::problems::day6::{part1, part2, part2_multithread, TEST_INPUT};
+    use crate::problems::day6::*;
 
     #[test]
     fn day6_part1() {
@@ -199,5 +243,10 @@ mod tests {
     #[test]
     fn day6_part2_multithread() {
         assert_eq!(part2_multithread(TEST_INPUT), 6);
+    }
+
+    #[test]
+    fn day6_part2_multithread_rayon() {
+        assert_eq!(part2_multithread_rayon(TEST_INPUT), 6);
     }
 }
