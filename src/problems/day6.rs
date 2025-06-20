@@ -92,7 +92,7 @@ pub fn part2_multithread(input: &str) -> usize {
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
-    let grid = Arc::new(CharGrid::new(input));
+    let grid = Arc::new(CharGrid::new(input).with_owned());
     let initial_guard_position = grid.find_initial_guard_location();
     let running_count = Arc::new(AtomicUsize::new(0));
     //atemt to estimate max length of loop turns
@@ -105,16 +105,14 @@ pub fn part2_multithread(input: &str) -> usize {
     for _ in 0..std::thread::available_parallelism().unwrap().get() {
         threads.push(
             Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
-                thread::spawn(move || {
-                    loop {
-                        let next = iter.lock().unwrap().next();
-                        match next {
-                            None => {return;},
-                            Some(next_guard) => {
-                                if HASHSET_FOR_LOOPS_AT.with_borrow_mut(|hash_set|
-                                    grid.loops_at(next_guard.0, next_guard.1,  Some(CharGrid::in_front_postion(next_guard.1,next_guard.0).expect("has been given as a permutation")), hash_set)
-                                ) {running_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);}
-                            }
+                thread::spawn(move || loop {
+                    let next = iter.lock().unwrap().next();
+                    match next {
+                        None => {return;},
+                        Some(next_guard) => {
+                            if HASHSET_FOR_LOOPS_AT.with_borrow_mut(|hash_set|
+                                grid.loops_at(next_guard.0, next_guard.1,  Some(CharGrid::in_front_postion(next_guard.1,next_guard.0).expect("has been given as a permutation")), hash_set)
+                            ) {running_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);}
                         }
                     }
                 })})
@@ -128,14 +126,14 @@ pub fn part2_multithread(input: &str) -> usize {
     running_count.load(std::sync::atomic::Ordering::SeqCst)
 }
 
-struct GuardPermutationsToCheckForLoopsIter  {
-    grid: CharGrid,
+struct GuardPermutationsToCheckForLoopsIter<'a>  {
+    grid: CharGrid<'a>,
     current_position: Ucoord,
     initial_guard_position: Ucoord,
     current_direction: Direction,
 }
-impl GuardPermutationsToCheckForLoopsIter{
-    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid) -> Self {
+impl<'a> GuardPermutationsToCheckForLoopsIter<'a>{
+    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid<'a>) -> Self {
         GuardPermutationsToCheckForLoopsIter {
             grid: char_grid.clone(),
             current_position: initial_guard_position,
@@ -145,7 +143,7 @@ impl GuardPermutationsToCheckForLoopsIter{
     }
 }
 
-impl Iterator for GuardPermutationsToCheckForLoopsIter {
+impl Iterator for GuardPermutationsToCheckForLoopsIter<'_> {
     type Item = (Ucoord, Direction);//Uquard is postion of the Guard not barrirer!!
     fn next(&mut self) -> Option<Self::Item> {
         // let current_position = self.current_position;
@@ -183,7 +181,7 @@ impl Direction {
     }
 }
 
-impl CharGrid {
+impl CharGrid<'_> {
     fn find_initial_guard_location(&self) -> Ucoord {
         let index = self.chars.into_iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
         self.vec_index_to_uquard(index)

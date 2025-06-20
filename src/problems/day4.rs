@@ -8,14 +8,17 @@ pub fn part1(input: &str) -> usize {
     let mut running_total:usize = 0;
 
     //horisontal
-    for line in 0..grid.bounds[1] {
-        running_total += search_term.check_line_occorences_count(grid.chars[grid.bounds[0]*line..grid.bounds[0]*(line+1)].into_iter().copied());
+    for y in 0..grid.bounds[1] {
+        running_total += search_term.check_line_occorences_count(
+            (0..grid.bounds[0]).map(|x| *grid.index(Ucoord(x, y)).expect("within bounds"))
+        );
     }
     // println!("horizontal:{}", running_total);
 
     //vetical
     for x in 0..grid.bounds[0]{
         //println!("{}: {:?}", x,(0..grid.bounds[1]).map(|y| grid.index(x,y)).collect::<Vec<_>>());
+        //println!("{:?}",(0..grid.bounds[1]).map(|y| *grid.index(Ucoord(x, y)).expect("within bounds")).collect::<Vec<_>>() );
         running_total += search_term.check_line_occorences_count(
             (0..grid.bounds[1]).map(|y| *grid.index(Ucoord(x, y)).expect("within bounds"))
         )
@@ -26,6 +29,7 @@ pub fn part1(input: &str) -> usize {
     for y in 0i32..(grid.bounds[1]+grid.bounds[0]-1) as i32{
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y-x>=0{grid.index(x as usize,(y-x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
+        //println!("{:?}",(0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(Ucoord(x as usize, (y-x)as usize))}else { None }).copied().collect::<Vec<_>>() );
         running_total += search_term.check_line_occorences_count(
             (0..grid.bounds[0] as i32).filter_map(|x|if y-x>=0{grid.index(Ucoord(x as usize, (y-x)as usize))}else { None }).copied() //check cloned performance
         );
@@ -37,6 +41,7 @@ pub fn part1(input: &str) -> usize {
     for y in 1-grid.bounds[0] as i32..grid.bounds[1] as i32{
         //println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|if y+x>=0{grid.index(x as usize,(y+x)as usize)}else { None }).collect::<Vec<_>>());
         // println!("{}: {:?}", y,(0..grid.bounds[0] as i32).map(|x|[x,y-x]).collect::<Vec<_>>());
+        //println!("{:?}", (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(Ucoord(x as usize, (y+x)as usize))}else { None }).copied().collect::<Vec<_>>());
         running_total += search_term.check_line_occorences_count(
             (0..grid.bounds[0] as i32).filter_map(|x|if y+x>=0{grid.index(Ucoord(x as usize, (y+x)as usize))}else { None }).copied() //check cloned performance
         );
@@ -167,17 +172,30 @@ const TEST_INPUT:&str =  include_str!("day4_test.txt");
 
 #[cfg(test)]
 mod tests {
-    use crate::problems::day4::{part1, part2, TEST_INPUT};
+    use ascii::AsAsciiStr;
+    use crate::problems::day4::*;
 
     #[test]
     fn day4_part1() {
         assert_eq!(part1(TEST_INPUT), 18);
     }
 
-    // #[test]
-    // fn day4_check_line() {
-    //     assert_eq!(SearchTerm::new(['X','M','A','S']).check_line_occorences_count("XMASAMXBAXMAS".chars()), 3)
-    // }
+    #[test]
+    fn day4_check_line() {
+        assert_eq!(SearchTerm::new([AsciiChar::X,AsciiChar::M,AsciiChar::A,AsciiChar::S]).check_line_occorences_count("XMASAMXBAXMAS".as_ascii_str().unwrap().chars()), 3)
+    }
+
+    #[test]
+    fn day4_index_test() {
+        let grid = CharGrid::new(TEST_INPUT);
+        assert_eq!(grid.bounds, [10,10]);
+        assert_eq!(grid.newline_lengh, 2);
+        assert_eq!(grid.index(Ucoord(0,0)), Some(&AsciiChar::M));
+        assert_eq!(grid.index(Ucoord(9,9)), Some(&AsciiChar::X));
+        assert!(grid.index(Ucoord(10,0)).is_none());
+        assert!(grid.index(Ucoord(10,9)).is_none());
+        assert!(grid.index(Ucoord(10,10)).is_none());
+    }
 
     #[test]
     fn day4_part2() {

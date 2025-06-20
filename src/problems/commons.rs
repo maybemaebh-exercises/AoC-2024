@@ -1,32 +1,34 @@
+use std::borrow::Cow;
 use std::hash::{Hash};
 use std::ops::{Add, Sub};
-use ascii::{AsAsciiStr, AsciiChar, AsciiString};
+use ascii::{AsAsciiStr, AsciiChar, AsciiStr};
 //use ascii::*;
 
 #[derive(Clone)]
-pub struct CharGrid {
-    pub chars: AsciiString,
-    pub bounds: [usize; 2]
+pub struct CharGrid<'a> {
+    pub chars: Cow<'a, AsciiStr>,
+    pub bounds: [usize; 2],
+    pub newline_lengh: usize,
 }
 
 
 
-impl CharGrid {
+impl CharGrid<'_> {
     pub fn index(&self, quard: Ucoord) -> Option<&AsciiChar> {
         self.index_usize(quard).map(|index| &self.chars[index])
     }
 
     #[allow(dead_code)]
     pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
-        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]) + quard.0)}
+        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]+self.newline_lengh) + quard.0)}
     }
 
     pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut AsciiChar> {
-        self.index_usize(quard).map(|index| &mut self.chars[index])
+        self.index_usize(quard).map(|index| &mut self.chars.to_mut()[index])
     }
 
     pub fn vec_index_to_uquard(&self, index: usize) -> Ucoord {
-        Ucoord(index % self.bounds[0], index / self.bounds[0])
+        Ucoord(index % (self.bounds[0]+self.newline_lengh), index / (self.bounds[0]+self.newline_lengh))
     }
 
     #[allow(dead_code)]
@@ -45,11 +47,25 @@ impl CharGrid {
 
     pub fn new(input: &str) -> CharGrid {
         let input = input.as_ascii_str().unwrap();
-        let mut chars = AsciiString::with_capacity(input.len());
-        chars.extend(input.chars().filter(|char| !(char ==&'\n'|| char ==&'\r')));
+        //let mut chars = AsciiString::with_capacity(input.len());
+        //chars.extend(input.chars().filter(|char| !(char ==&'\n'|| char ==&'\r')));
+        let mut newline_lengh = 0;
+        if input.chars().any(|char| char == '\n') {newline_lengh += 1}
+        if input.chars().any(|char| char == '\r') {newline_lengh += 1}
         CharGrid {
             bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
-            chars
+            chars: input.into(),
+            newline_lengh,
+        }
+    }
+}
+
+impl<'a> CharGrid<'a> {
+    pub fn with_owned(self) -> CharGrid<'static> {
+        CharGrid{
+            chars:Cow::Owned(self.chars.into_owned()),
+            bounds: self.bounds,
+            newline_lengh: self.newline_lengh
         }
     }
 }
