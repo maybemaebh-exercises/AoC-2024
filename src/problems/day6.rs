@@ -36,34 +36,17 @@ pub fn part1(input: &str) -> usize {
 
 pub fn part2(input: &str) -> usize {
     let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(400);
-    let mut grid = CharGrid::<AsciiString>::new(input);
-    let mut running_count = 0;//starting position
-    let mut current_position = grid.find_initial_guard_location();
-    let initial_guard_position = current_position;
-    let mut current_direction = Direction::UpwardsDownY;
+    let grid = CharGrid::<AsciiString>::new(input);
+    let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
-
-    loop{
-        match grid.next_guard(current_position, current_direction, None) {
-            None => {return running_count;},
-            Some(next_guard) => {
-                let currenct_char = grid.index_mut(current_position).unwrap();
-                if currenct_char != &'O' {*currenct_char = AsciiChar::V}
-                if next_guard.0 != current_position && next_guard.2 != AsciiChar::V && next_guard.2 != AsciiChar::O&& next_guard.0 != initial_guard_position {
-                    //assert_eq!(next_guard.2,'.');
-                    *grid.index_mut(next_guard.0).unwrap() = AsciiChar::Hash;
-                    if grid.loops_at(current_position, current_direction, None, &mut hashset_for_loops_at) {
-                        *grid.index_mut(next_guard.0).unwrap() = AsciiChar::O;
-                        running_count += 1;
-                    } else {
-                        *grid.index_mut(next_guard.0).unwrap() = AsciiChar::Dot;
-                    }
-                }
-                current_position = next_guard.0;
-                current_direction = next_guard.1;
-            }
-        }
-    }
+    //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
+    let iter = GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,&grid);
+    // for permutation in iter {
+    //     println!("{permutation:?}")
+    // }
+    iter.filter(|x|
+            grid.loops_at(x.0, x.1, Some(CharGrid::in_front_postion(x.1,x.0).expect("has been given as a permutation")), &mut hashset_for_loops_at)
+    ).count()
 }
 
 
