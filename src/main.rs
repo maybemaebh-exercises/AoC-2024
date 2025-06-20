@@ -33,18 +33,23 @@ use size::Size;
 
 mod problems;
 
-const BENCHMARK_TIMES:u32 = 100;
+const BENCHMARK_TIMES:u32 = 1000;
+const BENCHMARK_TIMEOUT: Duration = Duration::from_secs(1);
 include!(concat!(env!("OUT_DIR"), "/profile_info.rs"));
 
 macro_rules! benchmark_problem_part {
     ($d:ident,$part:ident,$input:ident) => {{
         let mut time = Duration::new(0, 0);
-        for _i in 0..(if BUILD_PROFILE == "release" {BENCHMARK_TIMES} else {1}) {
+        let total_now = Instant::now();
+        let mut benchmark_times = 0u32;
+        'benchmark_loop:for _i in 0..(if BUILD_PROFILE == "release" {BENCHMARK_TIMES} else {1}) {
             let now = Instant::now();
             problems::$d::$part(&$input);
             time += now.elapsed();
+            benchmark_times += 1;
+            if total_now.elapsed() > BENCHMARK_TIMEOUT {println!("timeout:{_i}");break 'benchmark_loop;}
         }
-        time /= BENCHMARK_TIMES;
+        time /= benchmark_times;
         time
     }};
 }
