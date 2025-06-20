@@ -26,7 +26,7 @@ const PROBLEM_NAMES: [&str; 25] = [
     "Code Chronicle",
 ];
 
-use std::fs;
+use std::{env, fs};
 use std::time::{Duration, Instant};
 use regex::Regex;
 use size::Size;
@@ -169,9 +169,17 @@ fn main() {
 
     let readme = fs::read_to_string("README.md").expect("input missing");
     let updated_readme:String = Regex::new("<tbody id=\"results\">(.|\n)*</tbody>").unwrap().replace(&readme, tbody).into();
-    if BUILD_PROFILE == "release" {
-        fs::write("README.md", &updated_readme).expect("could not write to file");
-    } else {
-        println!("{}", updated_readme);
-    }
+    let path = match BUILD_PROFILE == "release" {
+        false => "DEV_README.md",
+        true => match env::args().find(|arg| arg == "updatereadme") {
+            Some(_) => "README.md",
+            None => "LOCAL_README.md",
+        }
+    };
+
+    fs::write(
+        path,
+        &updated_readme
+    ).expect("could not write to file");
+
 }
