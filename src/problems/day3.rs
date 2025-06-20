@@ -1,3 +1,5 @@
+use tinyvec::TinyVec;
+
 pub fn part1(input:&str) -> usize {
     let input = input.chars();
 
@@ -52,7 +54,7 @@ pub fn part2(input:&str) -> usize {
     let mul_term = "mul(,)";
     let enable_term = "do()";
     let disable_term = "don't()";
-    let terms:[Vec<char>;3] = [mul_term.chars().collect(),enable_term.chars().collect(),disable_term.chars().collect()];
+    let terms:[TinyVec<[char;10]>;3] = [mul_term.chars().collect(),enable_term.chars().collect(),disable_term.chars().collect()];
 
     let mut running_total:usize = 0;
     let mut indexs = [0,0,0];
