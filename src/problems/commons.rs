@@ -1,31 +1,18 @@
-use std::borrow::Cow;
 use std::hash::{Hash};
 use std::ops::{Add, Sub};
-use ascii::{AsAsciiStr, AsciiChar, AsciiStr};
+use ascii::{AsAsciiStr, AsciiChar, AsciiStr, AsciiString};
 //use ascii::*;
 
 #[derive(Clone)]
-pub struct CharGrid<'a> {
-    pub chars: Cow<'a, AsciiStr>,
+pub struct CharGrid<T> where T: AsRef<AsciiStr> {
+    pub chars: T,
     pub bounds: [usize; 2],
     pub newline_lengh: usize,
 }
 
 
 
-impl CharGrid<'_> {
-    pub fn index(&self, quard: Ucoord) -> Option<&AsciiChar> {
-        self.index_usize(quard).map(|index| &self.chars[index])
-    }
-
-    #[allow(dead_code)]
-    pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
-        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]+self.newline_lengh) + quard.0)}
-    }
-
-    pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut AsciiChar> {
-        self.index_usize(quard).map(|index| &mut self.chars.to_mut()[index])
-    }
+impl<T: AsRef<AsciiStr>> CharGrid<T> {
 
     pub fn vec_index_to_uquard(&self, index: usize) -> Ucoord {
         Ucoord(index % (self.bounds[0]+self.newline_lengh), index / (self.bounds[0]+self.newline_lengh))
@@ -38,14 +25,49 @@ impl CharGrid<'_> {
             println!();
             for y in 0..self.bounds[1] {
                 for x in 0..self.bounds[0] {
-                    print!("{}", { self.chars[y*(self.bounds[0]) + x] });
+                    print!("{}", { self.chars.as_ref()[y*(self.bounds[0]) + x] });
                 }
                 println!();
             }
         }
     }
 
-    pub fn new(input: &str) -> CharGrid {
+
+}
+
+impl CharGrid<AsciiString> {
+    pub fn index(&self, quard: Ucoord) -> Option<&AsciiChar> {
+        self.index_usize(quard).map(|index| &self.chars[index])
+    }
+
+    pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
+        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*self.bounds[0] + quard.0)}
+    }
+    pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut AsciiChar> {
+        self.index_usize(quard).map(|index| &mut self.chars[index])
+    }
+    pub fn new(input: &str) -> CharGrid<AsciiString> {
+        let input = input.as_ascii_str().unwrap();
+        let mut chars = AsciiString::with_capacity(input.len());
+        chars.extend(input.chars().filter(|char| !(char ==&'\n'|| char ==&'\r')));
+        CharGrid {
+            bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
+            chars,
+            newline_lengh: 0,
+        }
+    }
+}
+
+impl CharGrid<&AsciiStr> {
+    pub fn index(&self, quard: Ucoord) -> Option<&AsciiChar> {
+        self.index_usize(quard).map(|index| &self.chars[index])
+    }
+
+    pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
+        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]+self.newline_lengh) + quard.0)}
+    }
+    
+    pub fn new(input: &str) -> CharGrid<&AsciiStr> {
         let input = input.as_ascii_str().unwrap();
         //let mut chars = AsciiString::with_capacity(input.len());
         //chars.extend(input.chars().filter(|char| !(char ==&'\n'|| char ==&'\r')));
@@ -56,16 +78,6 @@ impl CharGrid<'_> {
             bounds: [input.lines().next().unwrap().chars().count(), input.lines().count()],
             chars: input.into(),
             newline_lengh,
-        }
-    }
-}
-
-impl<'a> CharGrid<'a> {
-    pub fn with_owned(self) -> CharGrid<'static> {
-        CharGrid{
-            chars:Cow::Owned(self.chars.into_owned()),
-            bounds: self.bounds,
-            newline_lengh: self.newline_lengh
         }
     }
 }

@@ -4,13 +4,13 @@ use std::sync::atomic::AtomicUsize;
 use std::thread;
 use std::thread::JoinHandle;
 use ahash::{HashSet, HashSetExt};
-use ascii::AsciiChar;
+use ascii::{AsciiChar, AsciiString};
 use crate::problems::commons::{CharGrid, Ucoord};
 use rayon::prelude::*;
 use tinyvec::*;
 
 pub fn part1(input: &str) -> usize {
-    let mut grid = CharGrid::new(input);
+    let mut grid = CharGrid::<AsciiString>::new(input);
     let mut running_count = 1;//starting position
 
     let mut guard_position = grid.find_initial_guard_location();
@@ -36,7 +36,7 @@ pub fn part1(input: &str) -> usize {
 
 pub fn part2(input: &str) -> usize {
     let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(400);
-    let mut grid = CharGrid::new(input);
+    let mut grid = CharGrid::<AsciiString>::new(input);
     let mut running_count = 0;//starting position
     let mut current_position = grid.find_initial_guard_location();
     let initial_guard_position = current_position;
@@ -73,7 +73,7 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
-    let grid = CharGrid::new(input);
+    let grid = CharGrid::<AsciiString>::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
     //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
@@ -92,7 +92,7 @@ pub fn part2_multithread(input: &str) -> usize {
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     }
-    let grid = Arc::new(CharGrid::new(input).with_owned());
+    let grid = Arc::new(CharGrid::<AsciiString>::new(input));
     let initial_guard_position = grid.find_initial_guard_location();
     let running_count = Arc::new(AtomicUsize::new(0));
     //atemt to estimate max length of loop turns
@@ -126,14 +126,14 @@ pub fn part2_multithread(input: &str) -> usize {
     running_count.load(std::sync::atomic::Ordering::SeqCst)
 }
 
-struct GuardPermutationsToCheckForLoopsIter<'a>  {
-    grid: CharGrid<'a>,
+struct GuardPermutationsToCheckForLoopsIter  {
+    grid: CharGrid<AsciiString>,
     current_position: Ucoord,
     initial_guard_position: Ucoord,
     current_direction: Direction,
 }
-impl<'a> GuardPermutationsToCheckForLoopsIter<'a>{
-    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid<'a>) -> Self {
+impl GuardPermutationsToCheckForLoopsIter{
+    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid<AsciiString>) -> Self {
         GuardPermutationsToCheckForLoopsIter {
             grid: char_grid.clone(),
             current_position: initial_guard_position,
@@ -143,7 +143,7 @@ impl<'a> GuardPermutationsToCheckForLoopsIter<'a>{
     }
 }
 
-impl Iterator for GuardPermutationsToCheckForLoopsIter<'_> {
+impl Iterator for GuardPermutationsToCheckForLoopsIter {
     type Item = (Ucoord, Direction);//Uquard is postion of the Guard not barrirer!!
     fn next(&mut self) -> Option<Self::Item> {
         // let current_position = self.current_position;
@@ -181,7 +181,7 @@ impl Direction {
     }
 }
 
-impl CharGrid<'_> {
+impl CharGrid<AsciiString> {
     fn find_initial_guard_location(&self) -> Ucoord {
         let index = self.chars.into_iter().enumerate().find(|x|*x.1 == '^').unwrap().0;
         self.vec_index_to_uquard(index)

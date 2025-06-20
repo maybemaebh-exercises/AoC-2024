@@ -1,9 +1,9 @@
-use ascii::AsciiChar;
+use ascii::{AsciiChar, AsciiStr};
 use crate::problems::commons::{CharGrid, Ucoord};
 
 pub fn part1(input: &str) -> usize {
     //println!("{:?}",input.chars().filter(|x| !(x==&'\n'||x==&'\r')).collect::<Vec<_>>());
-    let grid = CharGrid::new(input);
+    let grid = CharGrid::<&AsciiStr>::new(input);
     let search_term = SearchTerm::new([AsciiChar::X,AsciiChar::M,AsciiChar::A,AsciiChar::S]);
     let mut running_total:usize = 0;
 
@@ -121,7 +121,7 @@ impl<const N: usize, T: Iterator<Item=Option<AsciiChar>>> Iterator for Occorence
 
 pub fn part2(input: &str) -> usize {
     //println!("part 2:");
-    let grid = CharGrid::new(input);
+    let grid = CharGrid::<&AsciiStr>::new(input);
     let search_term = SearchTerm::new([AsciiChar::M,AsciiChar::A,AsciiChar::S]);
     let mut running_total = 0;
 
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn day4_index_test() {
-        let grid = CharGrid::new(TEST_INPUT);
+        let grid = CharGrid::<&AsciiStr>::new(TEST_INPUT);
         assert_eq!(grid.bounds, [10,10]);
         //assert_eq!(grid.newline_lengh, 2);
         assert_eq!(grid.index(Ucoord(0,0)), Some(&AsciiChar::M));
