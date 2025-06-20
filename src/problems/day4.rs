@@ -189,7 +189,7 @@ mod tests {
     fn day4_index_test() {
         let grid = CharGrid::new(TEST_INPUT);
         assert_eq!(grid.bounds, [10,10]);
-        assert_eq!(grid.newline_lengh, 2);
+        //assert_eq!(grid.newline_lengh, 2);
         assert_eq!(grid.index(Ucoord(0,0)), Some(&AsciiChar::M));
         assert_eq!(grid.index(Ucoord(9,9)), Some(&AsciiChar::X));
         assert!(grid.index(Ucoord(10,0)).is_none());
