@@ -9,13 +9,13 @@ pub fn part1(input:&str) -> usize {
     let reports = input.split(0xA as char);
     let mut safe_reports:usize = 0;
     for report in reports{
-        let report = report.split_whitespace().map(|x|x.parse::<u32>().unwrap()).into_iter();
+        let report = report.split_whitespace().map(|x|x.parse::<u32>().unwrap());
         let fail_count = check_report_fast(&report,None);
         // let old_fail_count = check_report_fail_count_brute_fast(report);
         // if fail_count != old_fail_count{
         //     println!("Old Mistake! Report:{:?}, New Val:{}, Old Val:{}",report,fail_count, old_fail_count)
         // }
-        if fail_count == None { safe_reports += 1}
+        if fail_count.is_none() { safe_reports += 1}
     }
     safe_reports
 }
@@ -42,9 +42,13 @@ fn check_report_fail_count_brute_fast(report_slice:&str) -> u32{
         None => {0},
         Some(0) => 2,
         Some(x) => {
-            if check_report_fast(&report, Some(x-1)).is_none() {1}
-            else if check_report_fast(&report, Some(x)).is_none() {1}
-            else if x > 1 && check_report_fast(&report, Some(0)).is_none() {1}
+            if 
+                check_report_fast(&report, Some(x-1)).is_none() 
+                || 
+                check_report_fast(&report, Some(x)).is_none() 
+                || 
+                (x > 1 && check_report_fast(&report, Some(0)).is_none())
+            {1}
             else {2}
         }
     }

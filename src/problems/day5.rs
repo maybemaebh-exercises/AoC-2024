@@ -108,6 +108,7 @@ pub fn partialordsort<T: PartialOrd>(mut items: &mut [T]) {
 
     while items.len() > presorted {
         'make_start_min: loop {
+            #[allow(clippy::mut_range_bound)]
             for i in presorted..items.len() {
                 let ordering = T::partial_cmp(&items[0], &items[i]);
                 if let Some(Ordering::Greater) = ordering {

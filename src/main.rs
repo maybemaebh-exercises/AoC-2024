@@ -98,7 +98,7 @@ macro_rules! table_row {
 
         tr.push_str("\n</tr>");
 
-        #[allow(clippy::eq_op)]
+        #[allow(clippy::eq_op,clippy::nonminimal_bool)]
         if $part1_mutlithreaded || $part2_mutlithreaded {
             tr.push_str("\n<tr>");
 

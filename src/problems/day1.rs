@@ -63,7 +63,7 @@ pub fn part2 (input:&str) -> usize {
     let mut comp_val = second_list.next();
     let mut last_val:usize = first_list[0]+1;
     for value in first_list{
-        if !(value == last_val){
+        if value != last_val{
             current_count = 0;
             last_val = value;
             while match comp_val {Some(c) => c <= value, None => false} {
