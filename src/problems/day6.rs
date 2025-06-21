@@ -35,18 +35,28 @@ pub fn part1(input: &str) -> usize {
 
 
 pub fn part2(input: &str) -> usize {
-    let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(400);
+    let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(200);
     let grid = CharGrid::<AsciiString>::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
     //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
-    let iter = GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,&grid);
+    //println!("{}",grid.chars.len());
+    let mut iter = GuardPermutationsToCheckForLoopsIter::new(initial_guard_position, grid);
     // for permutation in iter {
     //     println!("{permutation:?}")
     // }
-    iter.filter(|x|
-            grid.loops_at(x.0, x.1, Some(CharGrid::in_front_postion(x.1,x.0).expect("has been given as a permutation")), &mut hashset_for_loops_at)
-    ).count()
+    let mut running_count = 0usize;
+    loop {
+        let next = iter.next_with_current_grid();
+        match next.0 {
+            None => return running_count,
+            Some(next_guard) => {
+                if next.1.loops_at(next_guard.0, next_guard.1, Some(CharGrid::in_front_postion(next_guard.1,next_guard.0).expect("has been given as a permutation")), &mut hashset_for_loops_at) {
+                    running_count += 1;
+                }
+            }
+        }
+    }
 }
 
 
@@ -60,7 +70,7 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
     let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
     //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
-    let iter = GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,&grid);
+    let iter = GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,grid.clone());
     // for permutation in iter {
     //     println!("{permutation:?}")
     // }
@@ -72,15 +82,15 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
 }
 
 pub fn part2_multithread(input: &str) -> usize {
-    thread_local! {
-    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
-    }
+    // thread_local! {
+    // static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    // }
     let grid = Arc::new(CharGrid::<AsciiString>::new(input));
     let initial_guard_position = grid.find_initial_guard_location();
     let running_count = Arc::new(AtomicUsize::new(0));
     //atemt to estimate max length of loop turns
     //let mut vec_for_loops_at = HashSet::with_capacity((grid.chars.len().pow(2) as f32 * 1.103_368_7e-6) as usize);
-    let iter = Arc::new(Mutex::new(GuardPermutationsToCheckForLoopsIter::new(initial_guard_position,&grid)));
+    let iter = Arc::new(Mutex::new(GuardPermutationsToCheckForLoopsIter::new(initial_guard_position, grid.as_ref().clone())));
     // for permutation in iter {
     //     println!("{permutation:?}")
     // }
@@ -88,17 +98,20 @@ pub fn part2_multithread(input: &str) -> usize {
     for _ in 0..std::thread::available_parallelism().unwrap().get() {
         threads.push(
             Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
-                thread::spawn(move || loop {
-                    let next = iter.lock().unwrap().next();
-                    match next {
-                        None => {return;},
-                        Some(next_guard) => {
-                            if HASHSET_FOR_LOOPS_AT.with_borrow_mut(|hash_set|
-                                grid.loops_at(next_guard.0, next_guard.1,  Some(CharGrid::in_front_postion(next_guard.1,next_guard.0).expect("has been given as a permutation")), hash_set)
-                            ) {running_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);}
+                thread::spawn(move ||
+                    {
+                        let mut hash_set = HashSet::with_capacity(400);//not counted by alloc_track
+                        loop {
+                            let next = iter.lock().unwrap().next();
+                            match next {
+                                None => { return; }
+                                Some(next_guard) => {
+                                    if grid.loops_at(next_guard.0, next_guard.1, Some(CharGrid::in_front_postion(next_guard.1, next_guard.0).expect("has been given as a permutation")),&mut hash_set)
+                                    { running_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed); }
+                                }
+                            }
                         }
-                    }
-                })})
+                    })})
         );
     }
     //let threads = threads.into_iter().map(|x|x.unwrap().join().unwrap());
@@ -116,13 +129,16 @@ struct GuardPermutationsToCheckForLoopsIter  {
     current_direction: Direction,
 }
 impl GuardPermutationsToCheckForLoopsIter{
-    fn new(initial_guard_position: Ucoord, char_grid: &CharGrid<AsciiString>) -> Self {
+    fn new(initial_guard_position: Ucoord, char_grid: CharGrid<AsciiString>) -> Self {
         GuardPermutationsToCheckForLoopsIter {
-            grid: char_grid.clone(),
+            grid: char_grid,
             current_position: initial_guard_position,
             initial_guard_position,
             current_direction: Direction::UpwardsDownY,
         }
+    }
+    fn next_with_current_grid(&mut self) -> (Option<(Ucoord, Direction)>, &CharGrid<AsciiString>) {
+        (self.next(), &self.grid)
     }
 }
 
@@ -138,7 +154,6 @@ impl Iterator for GuardPermutationsToCheckForLoopsIter {
         (self.current_position, self.current_direction, _) = next_guard;
         // println!("{next_guard:?}");
         if next_guard.0 != last_position && next_guard.2 != AsciiChar::V && next_guard.0 != self.initial_guard_position {
-
             return Some((last_position, last_diretion));
         }
         self.next()
