@@ -95,7 +95,7 @@ pub fn part2_multithread(input: &str) -> usize {
     //     println!("{permutation:?}")
     // }
     let mut threads:TinyVec<[Option<JoinHandle<_>>; 64]> = TinyVec::new();
-    for _ in 0..std::thread::available_parallelism().unwrap().get() {
+    for _ in 0..num_cpus::get_physical() {
         threads.push(
             Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
                 thread::spawn(move ||
