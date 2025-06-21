@@ -1,5 +1,5 @@
 use std::hash::{Hash};
-use std::ops::{Add, Sub};
+use std::ops::{Add, Mul, Sub};
 use ascii::{AsAsciiStr, AsciiChar, AsciiStr, AsciiString};
 //use ascii::*;
 
@@ -122,3 +122,48 @@ impl Sub for Ucoord {
 //     }
 //
 // }
+
+#[derive(Copy, Clone, Hash, Eq, PartialEq)]//TODO:try hash as u32
+#[allow(non_camel_case_types)]
+#[repr(transparent)]
+pub struct u24([u8; 3]);
+impl Add for u24 {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self {
+        Self::from_u32(self.to_u32() + rhs.to_u32())
+    }
+}
+
+impl Mul for u24 {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self::from_u32(self.to_u32() * rhs.to_u32())
+    }
+}
+impl Mul<u32> for u24 {
+    type Output = Self;
+    fn mul(self, rhs: u32) -> Self::Output {
+        Self::from_u32(self.to_u32() * rhs)
+    }
+}
+impl u24 {
+    fn to_u32(self) -> u32 {
+        let u24([a, b, c]) = self;
+        u32::from_le_bytes([a, b, c, 0])
+    }
+    fn from_u32(n: u32) -> Self {
+        let [a, b, c, d] = n.to_le_bytes();
+        debug_assert!(d == 0);
+        u24([a, b, c])
+    }
+}
+impl From<u32> for u24 {
+    fn from(n: u32) -> Self {
+        Self::from_u32(n)
+    }
+}
+impl From<u24> for u32 {
+    fn from(n: u24) -> Self {
+        n.to_u32()
+    }
+}
