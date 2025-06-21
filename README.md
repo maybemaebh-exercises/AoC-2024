@@ -1,3 +1,4 @@
+Progect performance charactaristics when run on a standard public github actions runner(4 Threads, 16GB ram(though you can see we never come close to using that much), x64). I will add data for running on a machine with more avalible paralelism manually later.
 <table>
   <thread>
     <tr>
