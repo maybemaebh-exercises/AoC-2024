@@ -5,7 +5,6 @@ use std::thread;
 use std::thread::{available_parallelism, JoinHandle};
 use ahash::{HashSet, HashSetExt};
 use ascii::{AsciiChar, AsciiString};
-use num_cpus::get;
 use crate::problems::commons::{get_avalible_phsical_parralelism, u24, CharGrid, Ucoord};
 use rayon::prelude::*;
 use tinyvec::*;
