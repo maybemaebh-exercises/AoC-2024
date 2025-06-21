@@ -183,6 +183,6 @@ pub fn get_avalible_phsical_parralelism() -> usize {
     } else { 
         paral.get()
     };
-    println!("{},{},{}",physical.get(),paral.get(),out);
+    //println!("{},{},{}",physical.get(),paral.get(),out);
     out
 }
