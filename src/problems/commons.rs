@@ -1,5 +1,7 @@
 use std::hash::{Hash};
+use std::num::NonZero;
 use std::ops::{Add, Mul, Sub};
+use std::thread::available_parallelism;
 use ascii::{AsAsciiStr, AsciiChar, AsciiStr, AsciiString};
 //use ascii::*;
 
@@ -166,4 +168,12 @@ impl From<u24> for u32 {
     fn from(n: u24) -> Self {
         n.to_u32()
     }
+}
+
+pub fn get_avalible_phsical_parralelism() -> usize {
+    let physical = NonZero::new(num_cpus::get_physical()).unwrap_or_else(|| NonZero::new(1).unwrap());
+    let paral = available_parallelism().unwrap_or_else(|_| NonZero::new(1).unwrap());
+    let out = (paral.get()*physical.get())/num_cpus::get();
+    assert!(out>0);
+    out
 }
