@@ -5,6 +5,7 @@ use std::thread;
 use std::thread::{available_parallelism, JoinHandle};
 use ahash::{HashSet, HashSetExt};
 use ascii::{AsciiChar, AsciiString};
+use num_cpus::get;
 use crate::problems::commons::{get_avalible_phsical_parralelism, u24, CharGrid, Ucoord};
 use rayon::prelude::*;
 use tinyvec::*;
@@ -95,6 +96,7 @@ pub fn part2_multithread(input: &str) -> usize {
     //     println!("{permutation:?}")
     // }
     let mut threads:TinyVec<[Option<JoinHandle<_>>; 64]> = TinyVec::new();
+    println!("{},{}",get_avalible_phsical_parralelism(),available_parallelism().unwrap().get()/2);
     for _ in 0..available_parallelism().unwrap().get()/2 {
         threads.push(
             Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
