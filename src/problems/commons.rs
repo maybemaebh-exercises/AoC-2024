@@ -174,7 +174,7 @@ impl From<u24> for u32 {
 pub fn get_avalible_phsical_parralelism() -> usize {
     let physical = NonZero::new(num_cpus::get_physical()).unwrap_or_else(|| NonZero::new(1).unwrap());
     let paral = available_parallelism().unwrap_or_else(|_| NonZero::new(1).unwrap());
-    if paral > physical {
+    let out = if paral > physical {
         physical.get()
     } else if ARCH == "x86_64" && paral.get() > 1 {
         paral.get()/2
@@ -182,5 +182,7 @@ pub fn get_avalible_phsical_parralelism() -> usize {
         panic!("put powerpc hyperthreading here");
     } else { 
         paral.get()
-    }
+    };
+    println!("{},{},{}",physical.get(),paral.get(),out);
+    out
 }
