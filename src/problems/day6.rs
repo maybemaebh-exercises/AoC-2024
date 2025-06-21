@@ -35,7 +35,7 @@ pub fn part1(input: &str) -> usize {
 
 
 pub fn part2(input: &str) -> usize {
-    let mut hashset_for_loops_at:HashSet<(Ucoord, Direction)> = HashSet::with_capacity(200);
+    let mut hashset_for_loops_at = HashSet::with_capacity(200);
     let grid = CharGrid::<AsciiString>::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
     //atemt to estimate max length of loop turns
@@ -64,7 +64,7 @@ pub fn part2(input: &str) -> usize {
 pub fn part2_multithread_rayon(input: &str) -> usize {
     let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();//adds 33% to time but is only fare
     thread_local! {
-    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
+    static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<u32>> = RefCell::new(HashSet::with_capacity(400))
     }
     let grid = CharGrid::<AsciiString>::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
@@ -201,21 +201,34 @@ impl CharGrid<AsciiString> {
         }
     }
 
-    fn loops_at(&self, location: Ucoord, direction: Direction, barrier: Option<Ucoord>, previus_turns: &mut HashSet<(Ucoord, Direction)>) -> bool {
+    fn loops_at(&self, location: Ucoord, direction: Direction, barrier: Option<Ucoord>, previus_turns: &mut HashSet<u32>) -> bool {//2^32/2^2 = 2^30Bytes max input before overflow (1GiB)
         previus_turns.clear();
         let mut current_location = location;
         let mut current_direction = direction;
+        let offset_for_direction = (self.bounds[0]*self.bounds[1]) as u32;
+        assert!(offset_for_direction<u32::MAX/4);
         loop {
             match self.next_guard(current_location, current_direction, barrier) {
                 None => {return false},
                 Some(next_guard) => {
                     if next_guard.0 == current_location {
-                        if previus_turns.contains(&(current_location,current_direction)) {return true;}
-                        previus_turns.insert((current_location,current_direction));
+                        if previus_turns.contains(&self.hashmap_key_from_state(current_location, &current_direction, &offset_for_direction)) {return true;}
+                        previus_turns.insert(self.hashmap_key_from_state(current_location, &current_direction, &offset_for_direction));
                         current_direction = next_guard.1;
                     } else { current_location = next_guard.0; }
                 }
             }
+        }
+    }
+
+    fn hashmap_key_from_state(&self, current_location: Ucoord, current_direction: &Direction, offset_for_direction: &u32) -> u32 {
+        (self.index_usize(current_location).unwrap() as u32)
+            +
+        offset_for_direction * match current_direction {
+            Direction::UpwardsDownY => { 0 }
+            Direction::RightwardsUpX => { 1 }
+            Direction::DownwardsUpY => { 2 }
+            Direction::LeftwardsDownX => { 3 }
         }
     }
 }
