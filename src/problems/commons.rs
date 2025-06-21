@@ -1,3 +1,4 @@
+use std::env::consts::ARCH;
 use std::hash::{Hash};
 use std::num::NonZero;
 use std::ops::{Add, Mul, Sub};
@@ -173,7 +174,13 @@ impl From<u24> for u32 {
 pub fn get_avalible_phsical_parralelism() -> usize {
     let physical = NonZero::new(num_cpus::get_physical()).unwrap_or_else(|| NonZero::new(1).unwrap());
     let paral = available_parallelism().unwrap_or_else(|_| NonZero::new(1).unwrap());
-    let out = (paral.get()*physical.get())/num_cpus::get();
-    assert!(out>0);
-    out
+    if paral > physical {
+        physical.get()
+    } else if ARCH == "x86_64" && paral.get() > 1 {
+        paral.get()/2
+    } else if ARCH == "powerpc64" {
+        panic!("put powerpc hyperthreading here");
+    } else { 
+        paral.get()
+    }
 }
