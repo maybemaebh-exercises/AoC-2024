@@ -32,6 +32,9 @@ use regex::Regex;
 use size::Size;
 
 mod problems;
+mod staging_tracking_allocator;
+#[global_allocator]
+static GLOBAL: staging_tracking_allocator::TrackingAllocator<std::alloc::System> = staging_tracking_allocator::TrackingAllocator(std::alloc::System);
 
 const BENCHMARK_TIMES:u32 = 1000;
 const BENCHMARK_TIMEOUT: Duration = Duration::from_secs(1);
@@ -59,8 +62,13 @@ macro_rules! allocations_problem_part {
         println!(stringify!($d));
         #[cfg(debug_assertions)]
         println!(stringify!($part));
-        let allocations_info = allocation_counter::measure(||{problems::$d::$part(&$input);});
-        (Size::from_bytes(allocations_info.bytes_max), allocations_info.count_total)
+        unsafe {
+            // No limit, no explicit failure handler for this example
+            GLOBAL.start_tracking(None, None);
+        }
+        problems::$d::$part(&$input);
+        let peak_allocation = GLOBAL.end_tracking();
+        (Size::from_bytes(peak_allocation.0), peak_allocation.1)
     }};
 }
 
