@@ -24,33 +24,33 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>1</th>
 <th>Historian Hysteria</th>
-<td>33µs</td>
+<td>27µs</td>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>55µs</td>
+<td>54µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
-<td>54µs</td>
+<td>57µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>29µs</td>
+<td>47µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>54µs</td>
+<td>53µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>155µs</td>
+<td>151µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>29µs</td>
+<td>35µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
 <td>32µs</td>
@@ -63,39 +63,39 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>33µs</td>
+<td>31µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>512µs</td>
+<td>511µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>200µs</td>
+<td>201µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>30µs</td>
+<td>28µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>280µs</td>
+<td>279µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>350µs</td>
+<td>351µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>39µs</td>
+<td>40µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>76µs</td>
+<td>59µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
-<td>26ms</td>
+<td>25ms</td>
 <td>17.6 KiB</td><td>2</td>
 <td>2262</td>
 </tr>
@@ -109,8 +109,8 @@ Progect performance charactaristics when run on a standard public github actions
 <th></th>
 <th></th>
 <th></th>
-<td>14ms</td>
-<td>42.1 KiB</td><td>141</td>
+<td>13ms</td>
+<td>37.7 KiB</td><td>19</td>
 <td>2262</td>
 </tr>
 </tbody>
