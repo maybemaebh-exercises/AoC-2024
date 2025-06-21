@@ -1,12 +1,12 @@
-use std::cell::RefCell;
-use std::sync::{Arc, Mutex};
-use std::sync::atomic::AtomicUsize;
-use std::thread;
-use std::thread::{available_parallelism, JoinHandle};
+use crate::problems::commons::{u24, CharGrid, Ucoord};
 use ahash::{HashSet, HashSetExt};
 use ascii::{AsciiChar, AsciiString};
-use crate::problems::commons::{get_avalible_phsical_parralelism, u24, CharGrid, Ucoord};
 use rayon::prelude::*;
+use std::cell::RefCell;
+use std::sync::atomic::AtomicUsize;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::thread::JoinHandle;
 use tinyvec::*;
 
 pub fn part1(input: &str) -> usize {
@@ -81,6 +81,7 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
     ).count()
 }
 
+
 pub fn part2_multithread(input: &str) -> usize {
     // thread_local! {
     // static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
@@ -95,8 +96,8 @@ pub fn part2_multithread(input: &str) -> usize {
     //     println!("{permutation:?}")
     // }
     let mut threads:TinyVec<[Option<JoinHandle<_>>; 64]> = TinyVec::new();
-    println!("{},{}",get_avalible_phsical_parralelism(),available_parallelism().unwrap().get()/2);
-    for _ in 0..available_parallelism().unwrap().get()/2 {
+    //println!("{},{}",get_avalible_phsical_parralelism(),available_parallelism().unwrap().get()/2);
+    for _ in 0..std::thread::available_parallelism().unwrap().get()/2 {
         threads.push(
             Some({let (grid, running_count, iter) = (grid.clone(), running_count.clone(), iter.clone());
                 thread::spawn(move ||
