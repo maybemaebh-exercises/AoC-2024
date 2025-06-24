@@ -1,8 +1,17 @@
 use std::str::Split;
-
+use rayon::prelude::*;
 pub fn part1(input: &str) -> usize {
     input
         .lines()
+        .filter_map(evaluate_line)
+        .sum()
+}
+
+pub fn part1_multithread(input: &str) -> usize {
+    input
+        .lines()
+        .par_bridge()
+        .into_par_iter()
         .filter_map(evaluate_line)
         .sum()
 }
