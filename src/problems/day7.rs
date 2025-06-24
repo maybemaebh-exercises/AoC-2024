@@ -1,3 +1,5 @@
+use std::iter::Map;
+use std::num::ParseIntError;
 use std::str::Split;
 use rayon::prelude::*;
 pub fn part1(input: &str) -> usize {
@@ -19,18 +21,23 @@ pub fn part1_multithread(input: &str) -> usize {
 fn evaluate_line(line: &str) -> Option<usize> {
     let mut line = line.split(":");
     let sum = line.next()?.parse::<usize>().ok()?;
-    let mut numbs = line.next()?.split(" ");
-    numbs.next()?;
-    let first_numb = numbs.next()?.parse::<usize>().ok()?;
+    let mut numbs = line.next()?.split(" ").map(|num| num.parse::<usize>());
+    _ = numbs.next()?;
+    let first_numb = numbs.next()?.ok()?;
     if can_reach_sum(&numbs, sum, first_numb) { Some(sum) } else { None }
 }
 
-fn can_reach_sum(remaining_terms: &Split<&str>, target_sum: usize, running_total: usize) -> bool {
+fn can_reach_sum<I: Iterator<Item = Result<usize, ParseIntError>> + Clone>(
+    remaining_terms: &I, 
+    target_sum: usize, 
+    running_total: usize
+) -> bool
+{
     let mut remaining_terms = remaining_terms.clone();
     match remaining_terms.next() {
         None => target_sum == running_total,
         Some(next_term) => {
-            let remaining_term = next_term.parse::<usize>().unwrap();
+            let remaining_term = next_term.unwrap();
             can_reach_sum(&remaining_terms, target_sum, running_total + remaining_term)
                 ||
                 can_reach_sum(&remaining_terms, target_sum, running_total * remaining_term)
