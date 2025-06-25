@@ -24,75 +24,75 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>1</th>
 <th>Historian Hysteria</th>
-<td>26µs</td>
+<td>30µs</td>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>52µs</td>
+<td>53µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
-<td>53µs</td>
+<td>56µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>22µs</td>
+<td>46µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>53µs</td>
+<td>56µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>153µs</td>
+<td>155µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>29µs</td>
+<td>44µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
-<td>32µs</td>
+<td>34µs</td>
 <td>0 bytes</td><td>0</td>
 <td>165225049</td>
-<td>62µs</td>
+<td>71µs</td>
 <td>0 bytes</td><td>0</td>
 <td>108830766</td>
 </tr>
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>34µs</td>
+<td>48µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>470µs</td>
+<td>469µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>199µs</td>
+<td>202µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>27µs</td>
+<td>55µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>282µs</td>
+<td>291µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>355µs</td>
+<td>358µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>39µs</td>
+<td>46µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>71µs</td>
+<td>62µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
 <td>28ms</td>
@@ -116,13 +116,13 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>7</th>
 <th>Bridge Repair</th>
-<td>46µs</td>
+<td>39µs</td>
 <td>24.2 KiB</td>
 <th>❌</th>
 <td>5ms</td>
 <td>0 bytes</td><td>0</td>
 <td>882304362421</td>
-<td>117ms</td>
+<td>101ms</td>
 <td>0 bytes</td><td>0</td>
 <td>145149066755184</td>
 </tr>
@@ -132,11 +132,11 @@ Progect performance charactaristics when run on a standard public github actions
 <th>"</th>
 <th>"</th>
 <th>✅</th>
-<td>2ms</td>
-<td>1.49 KiB</td><td>2</td>
+<td>3ms</td>
+<td>10.2 KiB</td><td>64</td>
 <td>882304362421</td>
-<td>50ms</td>
-<td>4 bytes</td><td>1</td>
+<td>49ms</td>
+<td>5.80 KiB</td><td>64</td>
 <td>145149066755184</td>
 </tr>
 </tbody>
