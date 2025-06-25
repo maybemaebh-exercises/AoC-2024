@@ -173,6 +173,7 @@ fn main() {
     tbody.push_str(&table_row!(day5,false,false));
     tbody.push_str(&table_row!(day6,false,true));
     tbody.push_str(&table_row!(day7,true,true));
+    tbody.push_str(&table_row!(day8,false,false));
 
     tbody.push_str("\n</tbody>");
 

@@ -1,4 +1,5 @@
 use std::env::consts::ARCH;
+use std::fmt::Debug;
 use std::hash::{Hash};
 use std::num::NonZero;
 use std::ops::{Add, Mul, Sub};
@@ -69,7 +70,6 @@ impl CharGrid<&AsciiStr> {
     pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
         if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*(self.bounds[0]+self.newline_lengh) + quard.0)}
     }
-    
     pub fn new(input: &str) -> CharGrid<&AsciiStr> {
         let input = input.as_ascii_str().unwrap();
         //let mut chars = AsciiString::with_capacity(input.len());
@@ -85,7 +85,51 @@ impl CharGrid<&AsciiStr> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct VecGrid<T: Default + Debug> {
+    pub bounds: [usize; 2],
+    pub vec: Vec<T>,
+}
+impl <T: Default + Debug> VecGrid<T> {
+    pub fn new(bounds: [usize; 2]) -> VecGrid<T> {
+        let mut vec = Vec::with_capacity(bounds[0]*bounds[1]);
+        vec.extend((0..bounds[0]*bounds[1]).map(|_|T::default()));
+        assert_eq!(vec.capacity(), vec.len());
+        VecGrid {
+            bounds,
+            vec
+        }
+    }
+    #[allow(dead_code)]
+    pub fn index(&self, quard: Ucoord) -> Option<&T> {
+        self.index_usize(quard).map(|index| &self.vec[index])
+    }
+
+    #[allow(dead_code)]
+    pub fn index_usize(&self, quard: Ucoord) -> Option<usize> {
+        if quard.0>=self.bounds[0] || quard.1>=self.bounds[1] {None} else {Some(quard.1*self.bounds[0] + quard.0)}
+    }
+    pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut T> {
+        self.index_usize(quard).map(|index| &mut self.vec[index])
+    }
+    pub fn vec_index_to_uquard(&self, index: usize) -> Ucoord {
+        Ucoord(index % self.bounds[0], index / self.bounds[0])
+    }
+    #[allow(dead_code)]
+    pub fn debug_print(&self) {
+        //#[cfg(test)]
+        {
+            println!();
+            for y in 0..self.bounds[1] {
+                for x in 0..self.bounds[0] {
+                    print!("{:?}", &self.vec[y*(self.bounds[0]) + x]);
+                }
+                println!();
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
 pub struct Ucoord(pub usize, pub usize);
 // #[derive(Debug, Clone, Copy, Hash)]
 // pub struct Iquard(pub i32, pub i32);
@@ -96,6 +140,20 @@ impl Add for Ucoord {
         Ucoord(self.0+rhs.0, self.1+rhs.1)
     }
 
+}
+
+impl Mul<usize> for Ucoord {
+    type Output = Self;
+    fn mul(self, rhs: usize) -> Self::Output {
+        Ucoord(self.0*rhs, self.1*rhs)
+    }
+
+}
+
+impl Default for Ucoord {
+    fn default() -> Self {
+        Ucoord(0, 0)
+    }
 }
 
 // impl Hash for Uquard {
