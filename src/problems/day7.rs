@@ -27,9 +27,18 @@ impl Part {
         let mut numbs = line.next()?.split(" ").map(|num| num.parse::<usize>());
         _ = numbs.next()?;
         let first_numb = numbs.next()?.ok()?;
-        if self.can_reach_sum(&numbs, sum, first_numb) { Some(sum) } else { None }
+        let mut reverse_numbs = numbs.clone().collect::<Vec<_>>();
+        reverse_numbs.reverse();
+        let reverse_numbs = reverse_numbs.into_iter();
+        //let last_numb = reverse_numbs.next()?.ok()?;
+        assert_eq!(
+            self.can_reach_sum_forward(&numbs, sum, first_numb),
+            self.can_reach_sum_backward(&reverse_numbs, first_numb, sum)
+        );
+        if self.can_reach_sum_forward(&numbs, sum, first_numb) { Some(sum) } else { None }
     }
-    fn can_reach_sum<I: Iterator<Item = Result<usize, ParseIntError>> + Clone>(
+    #[allow(dead_code)]
+    fn can_reach_sum_forward<I: Iterator<Item = Result<usize, ParseIntError>> + Clone>(
         &self,
         remaining_terms: &I,
         target_sum: usize,
@@ -40,12 +49,44 @@ impl Part {
         let mut remaining_terms = remaining_terms.clone();
         match remaining_terms.next() {
             Some(Ok(next_term)) =>
-                self.can_reach_sum(&remaining_terms, target_sum, running_total + next_term)
+                self.can_reach_sum_forward(&remaining_terms, target_sum, running_total + next_term)
                 ||
-                self.can_reach_sum(&remaining_terms, target_sum, running_total * next_term)
+                self.can_reach_sum_forward(&remaining_terms, target_sum, running_total * next_term)
                 ||
-                (self == &Part::Part2 && self.can_reach_sum(&remaining_terms, target_sum, running_total*(10usize.pow(next_term.ilog10() + 1)) + next_term)),
+                (self == &Part::Part2 && self.can_reach_sum_forward(&remaining_terms, target_sum, running_total*(10usize.pow(next_term.ilog10() + 1)) + next_term)),
             _ => target_sum == running_total,
+        }
+    }
+    fn can_reach_sum_backward<I: Iterator<Item = Result<usize, ParseIntError>> + Clone>(
+        &self,
+        remaining_terms: &I,
+        initial_value: usize,
+        running_total: usize
+    ) -> bool {
+        if running_total < initial_value { return false }
+        let mut remaining_terms = remaining_terms.clone();
+        match remaining_terms.next() {
+            Some(Ok(next_term)) =>
+                (
+                    running_total >= next_term
+                    &&
+                    self.can_reach_sum_backward(&remaining_terms, initial_value, running_total - next_term)
+                )
+                ||
+                (
+                    running_total % next_term == 0
+                    &&
+                    self.can_reach_sum_backward(&remaining_terms, initial_value, running_total / next_term)
+                )
+                ||
+                (
+                    self == &Part::Part2
+                    &&
+                    running_total % 10usize.pow(next_term.ilog10()+1) == next_term
+                    &&
+                    self.can_reach_sum_backward(&remaining_terms, initial_value, (running_total - next_term)/10usize.pow(next_term.ilog10()+1))
+                ),
+            _ => initial_value == running_total,
         }
     }
     fn evaluate_input_multithread(&self, input: &str) -> usize {
