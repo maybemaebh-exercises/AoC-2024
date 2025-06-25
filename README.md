@@ -1,3 +1,4 @@
+# Profiling
 Progect performance charactaristics when run on a standard public github actions runner(4 Threads, 16GB ram(though you can see we never come close to using that much), x64). I will add data for running on a machine with more avalible paralelism manually later.
 <table>
   <thread>
@@ -154,3 +155,11 @@ Progect performance charactaristics when run on a standard public github actions
 </tr>
 </tbody>
 </table>
+
+## Notes
+ - Rayon used for most multithreading with threadpool creation included in profiling.
+
+| Day | Notes |
+| ------------- | ------------- |
+| 1 | Mem could be saved by using small u size, can't be bothered |
+| 6 | Mem could be drasticly improved by using a bitvec rather than Vec<bool> but less ergonomic |
