@@ -2,7 +2,7 @@ use std::env::consts::ARCH;
 use std::fmt::Debug;
 use std::hash::{Hash};
 use std::num::NonZero;
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 use std::thread::available_parallelism;
 use ascii::{AsAsciiStr, AsciiChar, AsciiStr, AsciiString};
 //use ascii::*;
@@ -111,6 +111,7 @@ impl <T: Default + Debug> VecGrid<T> {
     pub fn index_mut(&mut self, quard: Ucoord) -> Option<&mut T> {
         self.index_usize(quard).map(|index| &mut self.vec[index])
     }
+    #[allow(dead_code)]
     pub fn vec_index_to_uquard(&self, index: usize) -> Ucoord {
         Ucoord(index % self.bounds[0], index / self.bounds[0])
     }
@@ -131,8 +132,8 @@ impl <T: Default + Debug> VecGrid<T> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
 pub struct Ucoord(pub usize, pub usize);
-// #[derive(Debug, Clone, Copy, Hash)]
-// pub struct Iquard(pub i32, pub i32);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
+pub struct Icoord(pub i32, pub i32);
 
 impl Add for Ucoord {
     type Output = Self;
@@ -176,13 +177,35 @@ impl Sub for Ucoord {
 //         self.0==other.0 && self.1==other.1
 //     }
 // }
-// impl Add for Iquard {
-//     type Output = Self;
-//     fn add(self, rhs: Self) -> Self::Output {
-//         Iquard(self.0+rhs.0, self.1+rhs.1)
-//     }
-//
-// }
+
+impl Add for Icoord {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Icoord(self.0+rhs.0, self.1+rhs.1)
+    }
+}
+impl Sub for Icoord {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Icoord(self.0-rhs.0, self.1-rhs.1)
+    }
+}
+impl Div<i32> for Icoord {
+    type Output = Self;
+    fn div(self, rhs: i32) -> Self::Output {
+        Icoord(self.0/rhs, self.1/rhs)
+    }
+}
+impl From<&Ucoord> for Icoord {
+    fn from(u: &Ucoord) -> Self {
+        Icoord(u.0 as i32, u.1 as i32)
+    }
+}
+impl From<Icoord> for Option<Ucoord> {
+    fn from(i: Icoord) -> Self {
+        if i.0>= 0 && i.1>= 0 {Some(Ucoord(i.0 as usize, i.1 as usize))} else {None}
+    }
+}
 
 #[derive(Copy, Clone, Hash, Eq, PartialEq)]//TODO:try hash as u32
 #[allow(non_camel_case_types)]
