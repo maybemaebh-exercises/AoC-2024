@@ -23,10 +23,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Temporarily modify the rust toolchain version
-      run: rustup update
-    - name: Output rust version for educational purposes
-      run: rustup --version
 
     - name: Cache
       uses: actions/cache@v4
@@ -38,11 +34,11 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --profile=release --verbose
     - name: Run Clippy
       run: cargo clippy --all-targets --all-features
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --profile=release --verbose
 
     - name: Run as release to update readme
       run: cargo run --profile=release updatereadme
