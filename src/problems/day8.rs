@@ -16,7 +16,7 @@ enum Part{
 impl Part {
     fn calculate(&self, input: &str) -> usize{
         let antenna_grid = CharGrid::<&AsciiStr>::new(input);
-        let mut antinode_grid:VecGrid<bool> = VecGrid::new(antenna_grid.bounds);
+        let mut antinode_grid:VecGrid<bool> = VecGrid::new(antenna_grid.bounds);//Vec bool really inefficient(1 byte for a bool) bit I canna be bothered
         let mut frequencies: TinyVec<[AsciiChar;64]> = TinyVec::new();
 
         for char in  antenna_grid.chars.into_iter().filter(|char| ![AsciiChar::Dot, AsciiChar::LineFeed, AsciiChar::CarriageReturn].contains(char)) {
