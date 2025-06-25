@@ -9,6 +9,7 @@ pub fn part1(input: &str) -> usize {
 }
 
 pub fn part1_multithread(input: &str) -> usize {
+    let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();
     input
         .lines()
         .par_bridge()
@@ -62,6 +63,7 @@ pub fn part2(input: &str) -> usize {
 }
 
 pub fn part2_multithread(input: &str) -> usize {
+    let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();
     input
         .lines()
         .par_bridge()
