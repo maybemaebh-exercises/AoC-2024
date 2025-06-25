@@ -37,7 +37,7 @@ impl Part {
         let antenna_locations = antenna_grid.chars
             .into_iter()
             .enumerate()
-            .filter(|char| *(*char).1 == frequency)
+            .filter(|char| *char.1 == frequency)
             .map(|char| antenna_grid.vec_index_to_uquard(char.0))
             .collect::<TinyVec<[Ucoord;128]>>();
         match self {

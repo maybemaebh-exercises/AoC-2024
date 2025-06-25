@@ -130,9 +130,9 @@ impl <T: Default + Debug> VecGrid<T> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Default)]
 pub struct Ucoord(pub usize, pub usize);
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Default)]
 pub struct Icoord(pub i32, pub i32);
 
 impl Add for Ucoord {
@@ -149,12 +149,6 @@ impl Mul<usize> for Ucoord {
         Ucoord(self.0*rhs, self.1*rhs)
     }
 
-}
-
-impl Default for Ucoord {
-    fn default() -> Self {
-        Ucoord(0, 0)
-    }
 }
 
 // impl Hash for Uquard {
