@@ -31,11 +31,11 @@ impl Part {
         reverse_numbs.reverse();
         let reverse_numbs = reverse_numbs.into_iter();
         //let last_numb = reverse_numbs.next()?.ok()?;
-        assert_eq!(
-            self.can_reach_sum_forward(&numbs, sum, first_numb),
-            self.can_reach_sum_backward(&reverse_numbs, first_numb, sum)
-        );
-        if self.can_reach_sum_forward(&numbs, sum, first_numb) { Some(sum) } else { None }
+        // assert_eq!(
+        //     self.can_reach_sum_forward(&numbs, sum, first_numb),
+        //     self.can_reach_sum_backward(&reverse_numbs, first_numb, sum)
+        // );
+        if self.can_reach_sum_backward(&reverse_numbs, first_numb, sum) { Some(sum) } else { None }
     }
     #[allow(dead_code)]
     fn can_reach_sum_forward<I: Iterator<Item = Result<usize, ParseIntError>> + Clone>(
