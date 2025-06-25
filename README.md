@@ -24,10 +24,10 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>1</th>
 <th>Historian Hysteria</th>
-<td>33µs</td>
+<td>32µs</td>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>53µs</td>
+<td>52µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
 <td>53µs</td>
@@ -37,20 +37,20 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>27µs</td>
+<td>53µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>57µs</td>
+<td>61µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>157µs</td>
+<td>160µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>27µs</td>
+<td>53µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
 <td>35µs</td>
@@ -63,39 +63,39 @@ Progect performance charactaristics when run on a standard public github actions
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>25µs</td>
+<td>41µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>468µs</td>
+<td>472µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>195µs</td>
+<td>204µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>27µs</td>
+<td>53µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>284µs</td>
+<td>282µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>356µs</td>
+<td>355µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>30µs</td>
+<td>54µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>69µs</td>
+<td>63µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
-<td>26ms</td>
+<td>28ms</td>
 <td>17.6 KiB</td><td>2</td>
 <td>2262</td>
 </tr>
@@ -109,14 +109,14 @@ Progect performance charactaristics when run on a standard public github actions
 <th></th>
 <th></th>
 <th></th>
-<td>13ms</td>
+<td>14ms</td>
 <td>37.7 KiB</td><td>19</td>
 <td>2262</td>
 </tr>
 <tr>
 <th>7</th>
 <th>Bridge Repair</th>
-<td>34µs</td>
+<td>51µs</td>
 <td>24.2 KiB</td>
 <th>❌</th>
 <td>3ms</td>
@@ -133,19 +133,19 @@ Progect performance charactaristics when run on a standard public github actions
 <th>"</th>
 <th>✅</th>
 <td>1ms</td>
-<td>10.2 KiB</td><td>39</td>
+<td>12.1 KiB</td><td>37</td>
 <td>882304362421</td>
 <td>2ms</td>
-<td>12.4 KiB</td><td>37</td>
+<td>16.1 KiB</td><td>37</td>
 <td>145149066755184</td>
 </tr>
 <tr>
 <th>8</th>
 <th>Resonant Collinearity</th>
-<td>31µs</td>
+<td>40µs</td>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>78µs</td>
+<td>77µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
 <td>81µs</td>
