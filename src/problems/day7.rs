@@ -24,12 +24,31 @@ impl Part {
     fn evaluate_line(&self, line: &str) -> Option<usize> {
         let mut line = line.split(":");
         let sum = line.next()?.parse::<usize>().ok()?;
-        let mut numbs = line.next()?.split(" ").map(|num| num.parse::<usize>());
+        let parameter_section = line.next()?;
+        let mut numbs = parameter_section.split(" ").map(|num| num.parse::<usize>());
         _ = numbs.next()?;
         let first_numb = numbs.next()?.ok()?;
-        let mut reverse_numbs = numbs.clone().collect::<Vec<_>>();
-        reverse_numbs.reverse();
-        let reverse_numbs = reverse_numbs.into_iter();
+        // let mut reverse_numbs_vec = numbs.clone().collect::<Vec<_>>();
+        // reverse_numbs_vec.reverse();
+        // let reverse_numbs_vec = reverse_numbs_vec.into_iter();
+        let reverse_numbs = parameter_section
+            .rsplit(" ")
+            .map(|num| num.parse::<usize>())
+            .enumerate()
+            .filter_map(|x|if x.0 <= parameter_section.split(" ").count()-3 {Some(x.1)} else {None});
+        // assert!(itertools::equal(
+        //     reverse_numbs.clone(),
+        //     reverse_numbs_vec.clone()
+        // ));
+        // for x in reverse_numbs.clone() {
+        //     print!("{x:?}");
+        // }
+        // println!(".");
+        // for x in reverse_numbs_vec.clone() {
+        //     print!("{x:?}");
+        // }
+        // println!("next:");
+
         //let last_numb = reverse_numbs.next()?.ok()?;
         // assert_eq!(
         //     self.can_reach_sum_forward(&numbs, sum, first_numb),
@@ -49,9 +68,9 @@ impl Part {
         let mut remaining_terms = remaining_terms.clone();
         match remaining_terms.next() {
             Some(Ok(next_term)) =>
-                self.can_reach_sum_forward(&remaining_terms, target_sum, running_total + next_term)
-                ||
                 self.can_reach_sum_forward(&remaining_terms, target_sum, running_total * next_term)
+                ||
+                self.can_reach_sum_forward(&remaining_terms, target_sum, running_total + next_term)
                 ||
                 (self == &Part::Part2 && self.can_reach_sum_forward(&remaining_terms, target_sum, running_total*(10usize.pow(next_term.ilog10() + 1)) + next_term)),
             _ => target_sum == running_total,
@@ -68,15 +87,15 @@ impl Part {
         match remaining_terms.next() {
             Some(Ok(next_term)) =>
                 (
-                    running_total >= next_term
-                    &&
-                    self.can_reach_sum_backward(&remaining_terms, initial_value, running_total - next_term)
+                    running_total % next_term == 0
+                        &&
+                        self.can_reach_sum_backward(&remaining_terms, initial_value, running_total / next_term)
                 )
                 ||
                 (
-                    running_total % next_term == 0
+                    running_total >= next_term
                     &&
-                    self.can_reach_sum_backward(&remaining_terms, initial_value, running_total / next_term)
+                    self.can_reach_sum_backward(&remaining_terms, initial_value, running_total - next_term)
                 )
                 ||
                 (
