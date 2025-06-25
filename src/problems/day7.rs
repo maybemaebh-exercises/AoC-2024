@@ -1,6 +1,8 @@
 use rayon::prelude::*;
 use std::cmp::PartialEq;
 use std::num::ParseIntError;
+use std::thread;
+
 pub fn part1(input: &str) -> usize {
     input
         .lines()
@@ -9,13 +11,7 @@ pub fn part1(input: &str) -> usize {
 }
 
 pub fn part1_multithread(input: &str) -> usize {
-    let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();
-    input
-        .lines()
-        .par_bridge()
-        .into_par_iter()
-        .filter_map(|x|Part::Part1.evaluate_line(x))
-        .sum()
+    Part::Part1.evaluate_input_multithread(input)
 }
 
 #[derive(Debug,PartialEq)]
@@ -52,6 +48,18 @@ impl Part {
             _ => target_sum == running_total,
         }
     }
+    fn evaluate_input_multithread(&self, input: &str) -> usize {
+        let _pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(thread::available_parallelism().unwrap().get()/2)
+            .build()
+            .unwrap();
+        input
+            .lines()
+            .par_bridge()
+            .into_par_iter()
+            .filter_map(|x|self.evaluate_line(x))
+            .sum()
+    }
 }
 
 
@@ -63,13 +71,7 @@ pub fn part2(input: &str) -> usize {
 }
 
 pub fn part2_multithread(input: &str) -> usize {
-    let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();
-    input
-        .lines()
-        .par_bridge()
-        .into_par_iter()
-        .filter_map(|x|Part::Part2.evaluate_line(x))
-        .sum()
+    Part::Part2.evaluate_input_multithread(input)
 }
 
 
