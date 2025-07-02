@@ -39,9 +39,9 @@ impl Iterator for PackedData {
                     self.input.pop_back().unwrap();
                     self.input.back()?
                 };
-                #[cfg(debug)]
+                #[cfg(debug_assertions)]
                 assert_eq!(self.input.back()?.0 % 2, 0);
-                #[cfg(debug)]
+                #[cfg(debug_assertions)]
                 assert!(self.input.len() > 1);
 
                 let front = self.input.front()?;
