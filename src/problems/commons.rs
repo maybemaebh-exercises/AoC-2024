@@ -268,6 +268,8 @@ pub struct EnumeratedVecDeque<T>{
     vec: VecDeque<T>,
     popped_from_front_count: usize,
 }
+
+#[allow(dead_code)]
 impl<T> EnumeratedVecDeque<T> {
     pub fn new(vec: VecDeque<T>) -> Self {
         EnumeratedVecDeque {vec, popped_from_front_count: 0}
