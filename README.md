@@ -38,10 +38,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>39µs</td>
+<td>23µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>64µs</td>
+<td>58µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
 <td>158µs</td>
@@ -51,7 +51,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>44µs</td>
+<td>35µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
 <td>34µs</td>
@@ -64,39 +64,39 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>46µs</td>
+<td>31µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>474µs</td>
+<td>472µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>194µs</td>
+<td>195µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>42µs</td>
+<td>54µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>286µs</td>
+<td>287µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>357µs</td>
+<td>356µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>41µs</td>
+<td>32µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>63µs</td>
+<td>73µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
-<td>28ms</td>
+<td>26ms</td>
 <td>17.6 KiB</td><td>2</td>
 <td>2262</td>
 </tr>
@@ -117,7 +117,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>7</th>
 <th>Bridge Repair</th>
-<td>32µs</td>
+<td>35µs</td>
 <td>24.2 KiB</td>
 <th>❌</th>
 <td>3ms</td>
@@ -133,30 +133,30 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>"</th>
 <th>"</th>
 <th>✅</th>
-<td>1ms</td>
-<td>16.1 KiB</td><td>37</td>
+<td>2ms</td>
+<td>2.29 KiB</td><td>38</td>
 <td>882304362421</td>
 <td>2ms</td>
-<td>9.83 KiB</td><td>37</td>
+<td>10.2 KiB</td><td>39</td>
 <td>145149066755184</td>
 </tr>
 <tr>
 <th>8</th>
 <th>Resonant Collinearity</th>
-<td>28µs</td>
+<td>29µs</td>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>46µs</td>
+<td>47µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
-<td>49µs</td>
+<td>50µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>955</td>
 </tr>
 <tr>
 <th>9</th>
 <th>Disk Fragmenter</th>
-<td>29µs</td>
+<td>38µs</td>
 <td>19.5 KiB</td>
 <th>❌</th>
 <td>154µs</td>
