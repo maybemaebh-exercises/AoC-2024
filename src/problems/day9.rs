@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use crate::problems::commons::EnumeratedVecDeque;
 
 pub fn part1(input: &str) -> usize {
     PackedData::new(input)
@@ -12,7 +13,7 @@ pub fn part2(_input: &str) -> usize {
     0
 }
 struct PackedData {
-    input: VecDeque<(usize, u8)>,
+    input: EnumeratedVecDeque<u8>,
 }
 struct DataBlock {
     file_id: usize,
@@ -26,7 +27,7 @@ impl Iterator for PackedData {
             0 => {
                 let block = DataBlock{
                     file_id:front.0/2,
-                    length: front.1
+                    length: *front.1
                 };
                 self.input.pop_front();
                 Some(block)
@@ -38,7 +39,9 @@ impl Iterator for PackedData {
                     self.input.pop_back().unwrap();
                     self.input.back()?
                 };
+                #[cfg(debug)]
                 assert_eq!(self.input.back()?.0 % 2, 0);
+                #[cfg(debug)]
                 assert!(self.input.len() > 1);
 
                 let front = self.input.front()?;
@@ -46,7 +49,7 @@ impl Iterator for PackedData {
                 Some(DataBlock {
                     file_id: back.0/2,
                     length:                 if back.1 < front.1 {
-                        self.input.front_mut()?.1 -=  back.1;
+                        *self.input.front_mut()?.1 -=  *back.1;
                         let back = self.input.pop_back().unwrap();
                         back.1
                     } else if back.1 == front.1 {
@@ -54,7 +57,7 @@ impl Iterator for PackedData {
                         let back = self.input.pop_back().unwrap();
                         back.1
                     } else { //back.1 > front.1
-                        self.input.back_mut()?.1 -= front.1;
+                        *self.input.back_mut()?.1 -= *front.1;
                         let front = self.input.pop_front().unwrap();
                         front.1
                     }
@@ -71,15 +74,14 @@ impl PackedData {
         let input_as_nums = input
             .chars()
             .filter_map(|x|x.to_digit(10))
-            .map(|x| x as u8)
-            .enumerate();
+            .map(|x| x as u8);
         let mut vec = VecDeque::with_capacity(input.len());
         vec.extend(input_as_nums);
         if vec.len() % 2 == 0 {
             vec.pop_back().unwrap();//ensure back is always data at end of function calls
         }
         PackedData {
-            input: vec
+            input: EnumeratedVecDeque::new(vec)
         }
     }
 }
