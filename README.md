@@ -28,72 +28,72 @@ Project performance characteristics when run on a standard public GitHub actions
 <td>26µs</td>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>50µs</td>
+<td>51µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
-<td>51µs</td>
+<td>53µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>23µs</td>
+<td>37µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>58µs</td>
+<td>56µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>158µs</td>
+<td>157µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>35µs</td>
+<td>31µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
-<td>34µs</td>
+<td>32µs</td>
 <td>0 bytes</td><td>0</td>
 <td>165225049</td>
-<td>71µs</td>
+<td>62µs</td>
 <td>0 bytes</td><td>0</td>
 <td>108830766</td>
 </tr>
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>31µs</td>
+<td>21µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>472µs</td>
+<td>469µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>195µs</td>
+<td>200µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>54µs</td>
+<td>35µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>287µs</td>
+<td>286µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>356µs</td>
+<td>358µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>32µs</td>
+<td>28µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>73µs</td>
+<td>61µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
 <td>26ms</td>
@@ -117,7 +117,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>7</th>
 <th>Bridge Repair</th>
-<td>35µs</td>
+<td>27µs</td>
 <td>24.2 KiB</td>
 <th>❌</th>
 <td>3ms</td>
@@ -133,11 +133,11 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>"</th>
 <th>"</th>
 <th>✅</th>
-<td>2ms</td>
-<td>2.29 KiB</td><td>38</td>
+<td>1ms</td>
+<td>14.1 KiB</td><td>38</td>
 <td>882304362421</td>
 <td>2ms</td>
-<td>10.2 KiB</td><td>39</td>
+<td>16.1 KiB</td><td>37</td>
 <td>145149066755184</td>
 </tr>
 <tr>
@@ -146,21 +146,21 @@ Project performance characteristics when run on a standard public GitHub actions
 <td>29µs</td>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>47µs</td>
+<td>45µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
-<td>50µs</td>
+<td>48µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>955</td>
 </tr>
 <tr>
 <th>9</th>
 <th>Disk Fragmenter</th>
-<td>38µs</td>
+<td>24µs</td>
 <td>19.5 KiB</td>
 <th>❌</th>
-<td>154µs</td>
-<td>312 KiB</td><td>1</td>
+<td>143µs</td>
+<td>19.5 KiB</td><td>1</td>
 <td>6386640365805</td>
 <td>28ns</td>
 <td>0 bytes</td><td>0</td>
