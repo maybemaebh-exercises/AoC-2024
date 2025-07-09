@@ -121,7 +121,7 @@ fn print_data(data_layout: &[Block]) {
         })
         .flat_map(|(id,length)| (0u16..length).map(move |_|id))
         .map(|id| match id {None => ".".to_string(), Some(id) => id.to_string() }) {
-        print!("{}", char);
+        print!("{char}");
     }
 }
 fn part2_pack_data(input:&str) -> Vec<Block> {

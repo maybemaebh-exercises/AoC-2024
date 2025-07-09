@@ -8,7 +8,7 @@ fn main() {
     let dest_path = Path::new(&out_dir).join("profile_info.rs");
 
     let profile = env::var("PROFILE").unwrap();
-    let content = format!("pub const BUILD_PROFILE: &str = \"{}\";", profile);
+    let content = format!("pub const BUILD_PROFILE: &str = \"{profile}\";");
 
     fs::write(&dest_path, content).unwrap();
 
