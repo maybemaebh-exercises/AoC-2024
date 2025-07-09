@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 ahash = "0.8.12"
 ascii = "1.1.0"
-itertools = "0.14.0"
 num-integer = "0.1.46"
 num_cpus = "1.17.0"
 rayon = "1.10.0"
