@@ -82,8 +82,10 @@ impl Part1PackedData {
 
 
 pub fn part2(input: &str) -> usize {
-    part2_pack_data(input)
+    Part2PackedData::new(input)
+        .collect::<Vec<_>>()
         .into_iter()
+        .rev()
         .map(|block| match block {
             Block::Gap{length} => {(None,length)},
             Block::File{id,length} => {(Some(id),length as u16)}
@@ -123,70 +125,78 @@ fn print_data(data_layout: &[Block]) {
         .map(|id| match id {None => ".".to_string(), Some(id) => id.to_string() }) {
         print!("{char}");
     }
+    println!();
 }
-fn part2_pack_data(input:&str) -> Vec<Block> {
-    assert!((input.len() / 2) + 1 < u16::MAX as usize);
-    let input_as_nums = input
-        .chars()
-        .filter_map(|x|x.to_digit(10))
-        .map(|x| x as u8)
-        .enumerate()
-        .map(|(i,x)| if i % 2 == 0 { Block::File {
-            id:(i/2) as u16,
-            length: x
-        }} else { Block::Gap{
-            length: x as u16
-        }});
-    let mut data_layout = Vec::with_capacity(input.len());
-    data_layout.extend(input_as_nums);
+struct Part2PackedData {
+    data_layout: Vec<Block>,
+    id_to_move:u16,
+    //offset to search always 0
+}
+impl Part2PackedData {
+    fn new(input:&str) -> Part2PackedData {
+        assert!((input.len() / 2) + 1 < u16::MAX as usize);
+        let input_as_nums = input
+            .chars()
+            .filter_map(|x|x.to_digit(10))
+            .map(|x| x as u8)
+            .enumerate()
+            .map(|(i,x)| if i % 2 == 0 { Block::File {
+                id:(i/2) as u16,
+                length: x
+            }} else { Block::Gap{
+                length: x as u16
+            }});
+        let mut data_layout = Vec::with_capacity(input.len());
+        data_layout.extend(input_as_nums);
 
-    let mut id_to_move:u16 = (data_layout.len()/2) as u16;
-    let mut offset_from_end_to_search:usize = 0;
+        let id_to_move:u16 = (data_layout.len()/2) as u16;
 
-    loop {
-        let index_checked = data_layout.len() - 1 - offset_from_end_to_search;
-        match data_layout[index_checked] {
-            Block::Gap{..} => { offset_from_end_to_search += 1;},
-            Block::File{id, ..} => {
-                if id == id_to_move {
+        Part2PackedData{
+            data_layout,
+            id_to_move
+        }
+    }
+}
+impl Iterator for Part2PackedData {
+    type Item = Block;
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            //print_data(self.data_layout.as_slice());
+            match self.data_layout.last()? {
+                Block::Gap{..} => { return self.data_layout.pop() },
+                Block::File{id, ..} => {
+                    if *id == self.id_to_move {
 
-                    let _ = attempt_to_move(&mut data_layout, index_checked);
-                    // offset_from_end_to_search = 0;
-                    if id_to_move == 0 {
-                        return data_layout;
-                    } else {
-                        id_to_move -= 1;
+                        let _ = attempt_to_move(&mut self.data_layout);
+                        // offset_from_end_to_search = 0;
+                        if self.id_to_move == 0 {
+                            assert_eq!(self.data_layout.len(), 1);
+                            return self.data_layout.pop();
+                        } else {
+                            self.id_to_move -= 1;
+                        }
+                    } else {// if not conditional doesn't account for
+                        return self.data_layout.pop()
                     }
-                } else {// if not conditional doesn't account for 
-                    offset_from_end_to_search += 1;
                 }
             }
         }
     }
 }
-
-fn attempt_to_move(data_layout: &mut Vec<Block>, index_to_move: usize) -> Option<()>{
-    let length_to_move = match data_layout[index_to_move] {Block::File {length, ..} => length, _ => unreachable!()};
-    for i in 0..index_to_move {
+fn attempt_to_move(data_layout: &mut Vec<Block>) -> Option<()>{
+    let length_to_move = *match data_layout.last().unwrap() {Block::File {length, ..} => length, _ => unreachable!()};
+    for i in 0..data_layout.len() {
         if let Block::Gap{length} = data_layout[i] {
             if length >= length_to_move as u16 {
-                data_layout.swap(index_to_move,i);
+                data_layout.swap_remove(i);// removes index to move, index to move - 1 new last
 
-                let new_gap_length = [Some(&data_layout[index_to_move-1]), data_layout.get(index_to_move+1)].iter()
-                    .filter_map(|x| *x)
-                    .filter_map(|block|match block {Block::Gap{length}=>Some(length),_ => None})
-                    .sum::<u16>() + length_to_move as u16;
-                data_layout[index_to_move] = Block::Gap {
-                    length: new_gap_length,
-                };
-                if let Block::Gap{..} = data_layout[index_to_move-1] {
-                    data_layout.remove(index_to_move-1);
-                    if let Some(Block::Gap{..}) = data_layout.get(index_to_move) {
-                        data_layout.remove(index_to_move);
-                    }
-                } else if let Some(Block::Gap{..}) = data_layout.get(index_to_move+1) {
-                    data_layout.remove(index_to_move+1);
+                let new_gap_length = match data_layout.last() {Some(Block::Gap {length}) => length, _ => &0} + (length_to_move as u16);
+                if let Block::Gap{..} = data_layout.last().unwrap()  {
+                    data_layout.pop();
                 }
+                data_layout.push(Block::Gap {
+                    length: new_gap_length,
+                });
 
 
                 if length > length_to_move as u16 {
