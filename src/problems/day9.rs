@@ -185,8 +185,8 @@ impl Iterator for Part2PackedData {
 }
 fn attempt_to_move(data_layout: &mut Vec<Block>) -> Option<()>{
     let length_to_move = *match data_layout.last().unwrap() {Block::File {length, ..} => length, _ => unreachable!()};
-    for i in 0..data_layout.len() {
-        if let Block::Gap{length} = data_layout[i] {
+    for (i, block) in data_layout.iter().enumerate() {
+        if let Block::Gap{length} = *block {
             if length >= length_to_move as u16 {
                 data_layout.swap_remove(i);// removes index to move, index to move - 1 new last
 
