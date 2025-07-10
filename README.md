@@ -25,78 +25,78 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>1</th>
 <th>Historian Hysteria</th>
-<td>34µs</td>
+<td>30µs</td>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>50µs</td>
+<td>55µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
-<td>62µs</td>
+<td>55µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
 <tr>
 <th>2</th>
 <th>Red-Nosed Reports</th>
-<td>40µs</td>
+<td>21µs</td>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>52µs</td>
+<td>58µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>151µs</td>
+<td>157µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
 <tr>
 <th>3</th>
 <th>Mull It Over</th>
-<td>45µs</td>
+<td>28µs</td>
 <td>16.8 KiB</td>
 <th>❌</th>
-<td>37µs</td>
+<td>34µs</td>
 <td>0 bytes</td><td>0</td>
 <td>165225049</td>
-<td>62µs</td>
+<td>72µs</td>
 <td>0 bytes</td><td>0</td>
 <td>108830766</td>
 </tr>
 <tr>
 <th>4</th>
 <th>Ceres Search</th>
-<td>39µs</td>
+<td>24µs</td>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>526µs</td>
+<td>482µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>194µs</td>
+<td>199µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
 <tr>
 <th>5</th>
 <th>Print Queue</th>
-<td>45µs</td>
+<td>37µs</td>
 <td>15.9 KiB</td>
 <th>❌</th>
 <td>283µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>352µs</td>
+<td>357µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
 <tr>
 <th>6</th>
 <th>Guard Gallivant</th>
-<td>48µs</td>
+<td>42µs</td>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>62µs</td>
+<td>72µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
-<td>24ms</td>
+<td>26ms</td>
 <td>17.6 KiB</td><td>2</td>
 <td>2262</td>
 </tr>
@@ -110,14 +110,14 @@ Project performance characteristics when run on a standard public GitHub actions
 <th></th>
 <th></th>
 <th></th>
-<td>12ms</td>
+<td>14ms</td>
 <td>37.7 KiB</td><td>19</td>
 <td>2262</td>
 </tr>
 <tr>
 <th>7</th>
 <th>Bridge Repair</th>
-<td>58µs</td>
+<td>31µs</td>
 <td>24.2 KiB</td>
 <th>❌</th>
 <td>3ms</td>
@@ -143,27 +143,27 @@ Project performance characteristics when run on a standard public GitHub actions
 <tr>
 <th>8</th>
 <th>Resonant Collinearity</th>
-<td>37µs</td>
+<td>31µs</td>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>46µs</td>
+<td>45µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
-<td>49µs</td>
+<td>48µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>955</td>
 </tr>
 <tr>
 <th>9</th>
 <th>Disk Fragmenter</th>
-<td>31µs</td>
+<td>24µs</td>
 <td>19.5 KiB</td>
 <th>❌</th>
-<td>152µs</td>
+<td>145µs</td>
 <td>19.5 KiB</td><td>1</td>
 <td>6386640365805</td>
-<td>37ms</td>
-<td>78.1 KiB</td><td>1</td>
+<td>29ms</td>
+<td>142 KiB</td><td>14</td>
 <td>6423258376982</td>
 </tr>
 </tbody>
