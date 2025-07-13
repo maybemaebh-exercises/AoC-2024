@@ -229,12 +229,12 @@ mod tests {
     const TEST_INPUT: &str = include_str!("day9_test.txt");
 
     #[test]
-    fn day8_part1() {
+    fn day9_part1() {
         assert_eq!(Day9().part1(TEST_INPUT), Some(1928));
     }
 
     #[test]
-    fn day8_part2() {
+    fn day9_part2() {
         assert_eq!(Day9().part2(TEST_INPUT), Some(2858));
     }
 }
