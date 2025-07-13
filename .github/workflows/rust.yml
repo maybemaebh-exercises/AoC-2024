@@ -40,7 +40,7 @@ jobs:
     - name: Set perf permisions
       run: echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
     - name: Set perf permisions
-      run: echo -1 | sudo tee  /proc/sys/kernel/kptr_restrict
+      run: echo -1 | sudo tee /proc/sys/kernel/kptr_restrict
 
     - name: Build
       run: cargo build --profile=release --verbose
