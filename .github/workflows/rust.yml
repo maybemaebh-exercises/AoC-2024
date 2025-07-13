@@ -37,6 +37,10 @@ jobs:
       run: sudo apt install linux-tools-common linux-tools-generic linux-tools-`uname -r`
     - name: Install flamegraph
       run: cargo install flamegraph
+    - name: Set perf permisions
+      run: echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+    - name: Set perf permisions
+      run: echo -1 | sudo tee  /proc/sys/kernel/kptr_restrict
 
     - name: Build
       run: cargo build --profile=release --verbose
@@ -46,7 +50,7 @@ jobs:
       run: cargo test --profile=release --verbose
 
     - name: Run as release to update readme
-      run: sudo cargo run --profile=release update-readme
+      run: cargo run --profile=release update-readme
 
     - name: Commit files
       run: |
