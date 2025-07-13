@@ -35,6 +35,8 @@ jobs:
 
     - name: Install flamegraph dependencies
       run: sudo apt install linux-tools-common linux-tools-generic linux-tools-`uname -r`
+    - name: Install flamegraph
+      run: cargo install flamegraph
 
     - name: Build
       run: cargo build --profile=release --verbose
