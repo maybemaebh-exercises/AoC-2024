@@ -1,12 +1,38 @@
 use std::collections::VecDeque;
 use crate::problems::commons::EnumeratedVecDeque;
 
-pub fn part1(input: &str) -> usize {
-    Part1PackedData::new(input)
+pub struct Day9();
+impl crate::Day for Day9 {
+    fn part1(&self, input: &str) -> Option<usize> { Some(
+        Part1PackedData::new(input)
         .flat_map(|block| (0..block.length).map(move |_|block.file_id))
         .enumerate()
         .map(|byte| byte.0 * byte.1)
         .sum()
+    ) }
+
+    fn part2(&self, input: &str) -> Option<usize> { Some(
+        Part2PackedData::new(input)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .map(|block| match block {
+                Block::Gap{length} => {(None,length)},
+                Block::File{id,length} => {(Some(id),length as u16)}
+            })
+            .flat_map(|(id,length)| (0..length).map(move |_|id))
+            .enumerate()
+            .filter_map(|byte| Some(byte.0 * byte.1? as usize))
+            .sum::<usize>()
+    ) }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day9.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Disk Fragmenter"
+    }
 }
 struct Part1PackedData {
     input: EnumeratedVecDeque<u8>,
@@ -80,21 +106,6 @@ impl Part1PackedData {
     }
 }
 
-
-pub fn part2(input: &str) -> usize {
-    Part2PackedData::new(input)
-        .collect::<Vec<_>>()
-        .into_iter()
-        .rev()
-        .map(|block| match block {
-            Block::Gap{length} => {(None,length)},
-            Block::File{id,length} => {(Some(id),length as u16)}
-        })
-        .flat_map(|(id,length)| (0..length).map(move |_|id))
-        .enumerate()
-        .filter_map(|byte| Some(byte.0 * byte.1? as usize))
-        .sum::<usize>()
-}
 #[derive(Debug)]
 enum Block {
     File{
@@ -211,6 +222,7 @@ fn attempt_to_move(data_layout: &mut Vec<Block>) -> Option<()>{
 
 #[cfg(test)]
 mod tests {
+    use crate::Day;
     use crate::problems::day9::*;
 
     #[allow(unused)]
@@ -218,11 +230,11 @@ mod tests {
 
     #[test]
     fn day8_part1() {
-        assert_eq!(part1(TEST_INPUT), 1928);
+        assert_eq!(Day9().part1(TEST_INPUT), Some(1928));
     }
 
     #[test]
     fn day8_part2() {
-        assert_eq!(part2(TEST_INPUT), 2858);
+        assert_eq!(Day9().part2(TEST_INPUT), Some(2858));
     }
 }

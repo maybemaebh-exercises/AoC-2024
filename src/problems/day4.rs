@@ -1,7 +1,26 @@
 use ascii::{AsciiChar, AsciiStr};
 use crate::problems::commons::{CharGrid, Ucoord};
 
-pub fn part1(input: &str) -> usize {
+pub struct Day4();
+impl crate::Day for Day4 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day4.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Ceres Search"
+    }
+}
+
+fn part1(input: &str) -> usize {
     //println!("{:?}",input.chars().filter(|x| !(x==&'\n'||x==&'\r')).collect::<Vec<_>>());
     let grid = CharGrid::<&AsciiStr>::new(input);
     let search_term = SearchTerm::new([AsciiChar::X,AsciiChar::M,AsciiChar::A,AsciiChar::S]);
@@ -119,7 +138,7 @@ impl<const N: usize, T: Iterator<Item=Option<AsciiChar>>> Iterator for Occorence
 }
 
 
-pub fn part2(input: &str) -> usize {
+fn part2(input: &str) -> usize {
     //println!("part 2:");
     let grid = CharGrid::<&AsciiStr>::new(input);
     let search_term = SearchTerm::new([AsciiChar::M,AsciiChar::A,AsciiChar::S]);

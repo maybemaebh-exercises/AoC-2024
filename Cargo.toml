@@ -3,6 +3,10 @@ name = "aoc-2024-megaproject"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release-debug]
+inherits = "release"
+debug = true
+
 [dependencies]
 ahash = "0.8.12"
 ascii = "1.1.0"

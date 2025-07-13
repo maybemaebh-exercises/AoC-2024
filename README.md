@@ -5,13 +5,12 @@ Project performance characteristics when run on a standard public GitHub actions
     <tr>
       <th rowspan="2">Day</th>
       <th rowspan="2">Name</th>
-      <th colspan="2">Input</th>
+      <th colspan="1">Input</th>
       <th rowspan="2">🔢🧵</th>
       <th colspan="4">Part 1</th>
       <th colspan="4">Part 2</th>
     </tr>
     <tr>
-      <th>Time</th>
       <th>Size</th>
       <th>Time</th>
       <th colspan="2">Allocations</th>

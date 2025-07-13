@@ -1,4 +1,23 @@
-pub fn part1 (input:&str) -> usize {
+pub struct Day1();
+impl crate::Day for Day1 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day1.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Historian Hysteria"
+    }
+}
+
+fn part1 (input:&str) -> usize {
     let values = input.split_whitespace().map(|x| x.parse::<usize>().unwrap());
 
     let line_count: usize = input.chars().filter(|x| *x == 0xA as char).count();
@@ -31,7 +50,7 @@ pub fn part1 (input:&str) -> usize {
     result_val
 }
 
-pub fn part2 (input:&str) -> usize {
+fn part2 (input:&str) -> usize {
         let values = input.split_whitespace().map(|x| x.parse::<usize>().unwrap());
 
     let line_count: usize = input.chars().filter(|x| *x == 0xA as char).count();

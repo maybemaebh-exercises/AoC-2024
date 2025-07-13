@@ -1,3 +1,22 @@
+pub struct Day2();
+impl crate::Day for Day2 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day2.txt")
+    }
+    
+    fn problem_name(&self) -> &'static str {
+        "Red-Nosed Reports"
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum CheckState {
     Increasing,

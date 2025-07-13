@@ -3,7 +3,26 @@ use std::fmt::Debug;
 use ahash::{HashMap};
 use ahash::RandomState;
 
-pub fn part1(input: &str) -> usize {
+pub struct Day5();
+impl crate::Day for Day5 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day5.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Print Queue"
+    }
+}
+
+fn part1(input: &str) -> usize {
     let mut running_total = 0;
     let mut lines = input.lines();
     let mut rules:HashMap<[usize;2],bool> = HashMap::with_capacity_and_hasher(input.lines().count(), RandomState::default());
@@ -36,7 +55,7 @@ pub fn part1(input: &str) -> usize {
     running_total
 }
 
-pub fn part2(input: &str) -> usize {
+fn part2(input: &str) -> usize {
     let mut running_total = 0;
     let mut lines = input.lines();
     let mut rules:HashMap<[usize;2],bool> = HashMap::with_capacity_and_hasher(input.lines().count(), RandomState::default());

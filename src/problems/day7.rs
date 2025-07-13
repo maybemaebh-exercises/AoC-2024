@@ -3,15 +3,37 @@ use std::cmp::PartialEq;
 use std::num::ParseIntError;
 use std::thread;
 
-pub fn part1(input: &str) -> usize {
-    input
+pub struct Day7();
+impl crate::Day for Day7 {
+    fn part1(&self, input: &str) -> Option<usize> { Some(
+        input
         .lines()
         .filter_map(|x|Part::Part1.evaluate_line(x))
         .sum()
-}
+    ) }
 
-pub fn part1_multithread(input: &str) -> usize {
-    Part::Part1.evaluate_input_multithread(input)
+    fn part2(&self, input: &str) -> Option<usize> { Some(
+        input
+            .lines()
+            .filter_map(|x|Part::Part2.evaluate_line(x))
+            .sum()
+    ) }
+
+    fn part1_multithreaded(&self, input: &str) -> Option<usize> {
+        Some(Part::Part1.evaluate_input_multithread(input))
+    }
+
+    fn part2_multithreaded(&self, input: &str) -> Option<usize> {
+        Some(Part::Part2.evaluate_input_multithread(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day7.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Bridge Repair"
+    }
 }
 
 #[derive(Debug,PartialEq)]
@@ -122,21 +144,9 @@ impl Part {
     }
 }
 
-
-pub fn part2(input: &str) -> usize {
-    input
-        .lines()
-        .filter_map(|x|Part::Part2.evaluate_line(x))
-        .sum()
-}
-
-pub fn part2_multithread(input: &str) -> usize {
-    Part::Part2.evaluate_input_multithread(input)
-}
-
-
 #[cfg(test)]
 mod tests {
+    use crate::Day;
     use crate::problems::day7::*;
 
     #[allow(unused)]
@@ -144,11 +154,11 @@ mod tests {
 
     #[test]
     fn day7_part1() {
-        assert_eq!(part1(TEST_INPUT), 3749);
+        assert_eq!(Day7().part1(TEST_INPUT).unwrap(), 3749);
     }
 
     #[test]
     fn day7_part2() {
-        assert_eq!(part2(TEST_INPUT), 11387);
+        assert_eq!(Day7().part2(TEST_INPUT).unwrap(), 11387);
     }
 }
