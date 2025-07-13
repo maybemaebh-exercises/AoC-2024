@@ -26,10 +26,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Historian Hysteria</th>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>62µs</td>
+<td>52µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>1223326</td>
-<td>57µs</td>
+<td>56µs</td>
 <td>15.7 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
@@ -38,7 +38,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Red-Nosed Reports</th>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>74µs</td>
+<td>57µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
 <td>159µs</td>
@@ -62,10 +62,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Ceres Search</th>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>470µs</td>
+<td>471µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>192µs</td>
+<td>194µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
@@ -74,10 +74,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Print Queue</th>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>284µs</td>
+<td>285µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>353µs</td>
+<td>352µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
@@ -127,7 +127,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <td>16.1 KiB</td><td>37</td>
 <td>882304362421</td>
 <td>2ms</td>
-<td>18.3 KiB</td><td>39</td>
+<td>128 bytes</td><td>37</td>
 <td>145149066755184</td>
 </tr>
 <tr>
@@ -135,7 +135,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Resonant Collinearity</th>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>46µs</td>
+<td>47µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
 <td>50µs</td>
@@ -147,10 +147,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Disk Fragmenter</th>
 <td>19.5 KiB</td>
 <th>❌</th>
-<td>152µs</td>
+<td>151µs</td>
 <td>19.5 KiB</td><td>1</td>
 <td>6386640365805</td>
-<td>46ms</td>
+<td>44ms</td>
 <td>142 KiB</td><td>14</td>
 <td>6423258376982</td>
 </tr>
