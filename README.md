@@ -38,10 +38,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Red-Nosed Reports</th>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>56µs</td>
+<td>58µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>160µs</td>
+<td>158µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
@@ -53,7 +53,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <td>32µs</td>
 <td>0 bytes</td><td>0</td>
 <td>165225049</td>
-<td>76µs</td>
+<td>70µs</td>
 <td>0 bytes</td><td>0</td>
 <td>108830766</td>
 </tr>
@@ -62,10 +62,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Ceres Search</th>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>472µs</td>
+<td>470µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>193µs</td>
+<td>197µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
@@ -86,7 +86,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Guard Gallivant</th>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>64µs</td>
+<td>62µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
 <td>24ms</td>
@@ -124,10 +124,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th></th>
 <th>✅</th>
 <td>1ms</td>
-<td>8.27 KiB</td><td>38</td>
+<td>14.1 KiB</td><td>37</td>
 <td>882304362421</td>
 <td>2ms</td>
-<td>14.1 KiB</td><td>37</td>
+<td>10.1 KiB</td><td>37</td>
 <td>145149066755184</td>
 </tr>
 <tr>
@@ -135,10 +135,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Resonant Collinearity</th>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>48µs</td>
+<td>51µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
-<td>53µs</td>
+<td>49µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>955</td>
 </tr>
@@ -147,10 +147,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Disk Fragmenter</th>
 <td>19.5 KiB</td>
 <th>❌</th>
-<td>155µs</td>
+<td>153µs</td>
 <td>19.5 KiB</td><td>1</td>
 <td>6386640365805</td>
-<td>45ms</td>
+<td>44ms</td>
 <td>142 KiB</td><td>14</td>
 <td>6423258376982</td>
 </tr>
