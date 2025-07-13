@@ -34,7 +34,7 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install flamegraph dependencies
-      run: sudo apt install -y linux-perf linux-tools-common linux-tools-generic linux-tools-`uname -r`
+      run: apt-get install linux-tools-common linux-tools-generic linux-tools-`uname -r`
 
     - name: Build
       run: cargo build --profile=release --verbose
