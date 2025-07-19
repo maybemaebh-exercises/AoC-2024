@@ -1,3 +1,4 @@
+use std::cmp::PartialEq;
 use std::collections::VecDeque;
 use crate::problems::commons::EnumeratedVecDeque;
 
@@ -125,25 +126,20 @@ impl Block {
         }
     }
 }
-#[allow(dead_code)]
-fn print_data(data_layout: &[Block]) {
-    for char in data_layout.iter()
-        .map(|block| match block {
-            Block::Gap{length} => {(None,*length)},
-            Block::File{id,length} => {(Some(id),*length as u16)}
-        })
-        .flat_map(|(id,length)| (0u16..length).map(move |_|id))
-        .map(|id| match id {None => ".".to_string(), Some(id) => id.to_string() }) {
-        print!("{char}");
-    }
-    println!();
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum GapOccurrence {
+    None,
+    Invalid{last_valid_i:usize},
+    Valid{i:usize}
 }
 struct Part2PackedData {
     data_layout: Vec<Block>,
     id_to_move:u16,
-    first_gap_occurrence: [Option<usize>;10]
+    first_gap_occurrence: [GapOccurrence;10]
     //offset to search always 0
 }
+
+
 impl Part2PackedData {
     fn new(input:&str) -> Part2PackedData {
         assert!((input.len() / 2) + 1 < u16::MAX as usize);
@@ -162,32 +158,14 @@ impl Part2PackedData {
         data_layout.extend(input_as_nums);
 
         let id_to_move:u16 = (data_layout.len()/2) as u16;
-
-        let mut first_gap_occurrence = [None;10];
-        let mut biggest_gap_yet = 0u16;
-
-        for block in data_layout.iter().enumerate() {
-            if let Block::Gap{length} = block.1 {
-                if length > &biggest_gap_yet {
-                    for gap_occurrence in &mut first_gap_occurrence[biggest_gap_yet as usize + 1 ..= (*length) as usize] {*gap_occurrence = Some(block.0);}
-                    if length >= &9 {
-                        return Part2PackedData{
-                            data_layout,
-                            id_to_move,
-                            first_gap_occurrence
-                        }
-                    }
-                    biggest_gap_yet = *length;
-                }
-            }
-        }
         Part2PackedData{
             data_layout,
             id_to_move,
-            first_gap_occurrence
+            first_gap_occurrence: [GapOccurrence::Invalid {last_valid_i:0}; 10]
         }
     }
 
+    #[allow(dead_code)]
     fn print(&self) {
         for char in self.data_layout.iter()
             .map(|block| match block {
@@ -205,9 +183,7 @@ impl Part2PackedData {
         // println!("{:?}", self.first_gap_occurrence);
         // self.print();
         let length_to_move = *match self.data_layout.last().unwrap() {Block::File {length, ..} => length, _ => unreachable!()};
-
-        self.update_first_gap_occurrences(0);
-        let i = self.first_gap_occurrence[length_to_move as usize]?;
+        let i = self.first_gap_occurrence(length_to_move)?;
         if i >= self.data_layout.len() {return None}
         let block = &self.data_layout[i];
         if let Block::Gap{length} = *block {
@@ -224,49 +200,62 @@ impl Part2PackedData {
             });
 
 
-            if length > length_to_move as u16 && i + 1 != self.data_layout.len() {
+            if length > length_to_move as u16 {
                 self.data_layout.insert(i+1, Block::Gap {length: length - length_to_move as u16});
+                self.shift_refs_from_insert(i+1);
             }
-            self.update_first_gap_occurrences(length_to_move);
-            return Some(())
+            self.set_invalid(length_to_move);
+            Some(())
             // }
-        }
-        None
+        } else {unreachable!()}
     }
-    fn update_first_gap_occurrences(&mut self, length_to_move:u8) {
-    //     self.first_gap_occurrence = [None;10];
-    //     let mut biggest_gap_yet = 0u16;
-    //
-    //     for block in self.data_layout.iter().enumerate() {
-    //         if let Block::Gap{length} = block.1 {
-    //             if length > &biggest_gap_yet {
-    //                 for gap_occurrence in &mut self.first_gap_occurrence[biggest_gap_yet as usize + 1 ..= (*length) as usize] {*gap_occurrence = Some(block.0);}
-    //                 if length >= &9 {
-    //                     return
-    //                 }
-    //                 biggest_gap_yet = *length;
-    //             }
-    //         }
-    //     }
-    //     return;
-
-        //find smallest gap effected
-        let mut i = self.first_gap_occurrence[length_to_move as usize].unwrap();
-        let mut smallest_affected_gap = self.first_gap_occurrence.iter().enumerate().find(|x|*x.1 == Some(i)).unwrap().0 as u16;
-        //replace lost ones with none
-        //record where already none at to not waste work
-        
-        loop {
-            if i == self.data_layout.len() {return}
-            if let Block::Gap{length} = self.data_layout[i] {
-                if length >= smallest_affected_gap {
-                    for length in smallest_affected_gap..=length {self.first_gap_occurrence[length as usize] = Some(i)}
-                    if length >= 9 {return;}
-                    smallest_affected_gap = length + 1;
-                }
+    fn shift_refs_from_insert(&mut self, insert: usize) {
+        self.first_gap_occurrence.iter_mut()
+            .filter_map(|occurrence|
+            match occurrence {
+                GapOccurrence::Invalid{last_valid_i} => Some(last_valid_i),
+                GapOccurrence::Valid {i} => Some(i),
+                GapOccurrence::None => None,
             }
-            i += 1;
+            )
+            .filter(|i|**i>=insert)
+            .for_each(|i|*i += 1);
+    }
+    fn first_gap_occurrence(&mut self, length_to_find:u8) -> Option<usize> {
+        match self.first_gap_occurrence[length_to_find as usize] {
+            GapOccurrence::Valid {i} => Some(i),
+            GapOccurrence::None => None,
+            GapOccurrence::Invalid{last_valid_i} => {
+                let mut largest_gap_yet = 0;
+                for i in last_valid_i..self.data_layout.len() {
+                    if let Block::Gap{length} = &self.data_layout[i] {
+                        if length > &largest_gap_yet {
+                            self.first_gap_occurrence[(largest_gap_yet as usize) + 1..=(*length) as usize]
+                                .iter_mut()
+                                .for_each(|gap_occurrence|
+                                    if let GapOccurrence::Invalid { .. } = *gap_occurrence {*gap_occurrence = GapOccurrence::Valid { i } }
+                                );
+                            if length >= &(length_to_find as u16) {
+                                assert_eq!(self.first_gap_occurrence[length_to_find as usize], GapOccurrence::Valid{i});
+                                return Some(i);
+                            }
+                            largest_gap_yet = *length;
+                        }
+                    }
+                }
+                self.first_gap_occurrence[(largest_gap_yet as usize) + 1..=9]
+                    .iter_mut()
+                    .for_each(|gap_occurrence| if let GapOccurrence::Invalid { .. } = *gap_occurrence { *gap_occurrence = GapOccurrence::None});
+                None
+            }
         }
+    }
+    fn set_invalid(&mut self, length_to_move:u8) {
+        let old_gap = self.first_gap_occurrence[length_to_move as usize];
+        let old_i = match old_gap {GapOccurrence::Valid {i} => i, _ => unreachable!()};
+        self.first_gap_occurrence.iter_mut()
+            .filter(|occurrence| **occurrence == old_gap)
+            .for_each(|occurrence| *occurrence = GapOccurrence::Invalid { last_valid_i: old_i });
     }
 }
 impl Iterator for Part2PackedData {
