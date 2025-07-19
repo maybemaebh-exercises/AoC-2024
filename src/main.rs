@@ -2,6 +2,7 @@ use regex::Regex;
 use size::Size;
 use std::time::{Duration, Instant};
 use std::{env, fs};
+use std::path::Path;
 use std::process::Command;
 use crate::problems::day1::Day1;
 use crate::problems::day2::Day2;
@@ -51,7 +52,7 @@ fn allocations_problem_part (day: &dyn Day, part2:bool, multithreaded:bool) -> (
 }
 
 fn repeat_part(days: &[Box<dyn Day>]) {
-    println!("{:?}", env::args().collect::<Vec<_>>());
+    // println!("{:?}", env::args().collect::<Vec<_>>());
     let day_num_regex = Regex::new(r"day(\d+)").unwrap();
     let day_num: usize = env::args()
         .filter_map(|arg| day_num_regex.captures(&arg)?[1].parse().ok())
@@ -72,16 +73,23 @@ fn generate_flamegraph(day: (usize, &Box<dyn Day>), part2:bool, multithreaded:bo
         if part2 { "part2" } else { "part1" }.to_string(),
         if multithreaded { "multithreaded" } else { "" }.to_string()
     ];
-    let status = Command::new("cargo")
+    let mut path = Path::new(match env::args().find(|arg| arg == "update-readme") {
+        Some(_) => "",
+        None => "local_flamegraph"
+    })
+        .join(permutation.join("-"));
+    path.set_extension("svg");
+    // println!("output path:{path:?} -> {}", path.to_str().unwrap());
+    let _status = Command::new("cargo")
         .arg("flamegraph")
         .arg("--profile=release-debug")
-        .arg(format!("--output={}.svg", permutation.join("-")))
+        .arg(format!("--output={}",path.to_str().unwrap()))
         .arg("--")
         .arg("repeat-part")
         .args(permutation)
         .status()
         .unwrap();
-    println!("{status:?}");
+    //println!("{status:?}");
 }
 
 #[allow(clippy::borrowed_box)]
