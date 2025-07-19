@@ -141,6 +141,7 @@ fn print_data(data_layout: &[Block]) {
 struct Part2PackedData {
     data_layout: Vec<Block>,
     id_to_move:u16,
+    first_gap_occurrence: [Option<usize>;10]
     //offset to search always 0
 }
 impl Part2PackedData {
@@ -162,9 +163,109 @@ impl Part2PackedData {
 
         let id_to_move:u16 = (data_layout.len()/2) as u16;
 
+        let mut first_gap_occurrence = [None;10];
+        let mut biggest_gap_yet = 0u16;
+
+        for block in data_layout.iter().enumerate() {
+            if let Block::Gap{length} = block.1 {
+                if length > &biggest_gap_yet {
+                    for gap_occurrence in &mut first_gap_occurrence[biggest_gap_yet as usize + 1 ..= (*length) as usize] {*gap_occurrence = Some(block.0);}
+                    if length >= &9 {
+                        return Part2PackedData{
+                            data_layout,
+                            id_to_move,
+                            first_gap_occurrence
+                        }
+                    }
+                    biggest_gap_yet = *length;
+                }
+            }
+        }
         Part2PackedData{
             data_layout,
-            id_to_move
+            id_to_move,
+            first_gap_occurrence
+        }
+    }
+
+    fn print(&self) {
+        for char in self.data_layout.iter()
+            .map(|block| match block {
+                Block::Gap{length} => {(None,*length)},
+                Block::File{id,length} => {(Some(id),*length as u16)}
+            })
+            .flat_map(|(id,length)| (0..length).map(move |_|id))
+            .map(|x| match x {Some(x) => (*x).to_string(), None => ".".to_string() }){
+            print!("{char}");
+        }
+        println!();
+    }
+
+    fn attempt_to_move(&mut self) -> Option<()>{
+        // println!("{:?}", self.first_gap_occurrence);
+        // self.print();
+        let length_to_move = *match self.data_layout.last().unwrap() {Block::File {length, ..} => length, _ => unreachable!()};
+
+        self.update_first_gap_occurrences(0);
+        let i = self.first_gap_occurrence[length_to_move as usize]?;
+        if i >= self.data_layout.len() {return None}
+        let block = &self.data_layout[i];
+        if let Block::Gap{length} = *block {
+            assert!(length >= length_to_move as u16);
+            // if length >= length_to_move as u16 {
+            self.data_layout.swap_remove(i);// removes index to move, index to move - 1 new last
+
+            let new_gap_length = match self.data_layout.last() {Some(Block::Gap {length}) => length, _ => &0} + (length_to_move as u16);
+            if let Block::Gap{..} = self.data_layout.last().unwrap()  {
+                self.data_layout.pop();
+            }
+            self.data_layout.push(Block::Gap {
+                length: new_gap_length,
+            });
+
+
+            if length > length_to_move as u16 && i + 1 != self.data_layout.len() {
+                self.data_layout.insert(i+1, Block::Gap {length: length - length_to_move as u16});
+            }
+            self.update_first_gap_occurrences(length_to_move);
+            return Some(())
+            // }
+        }
+        None
+    }
+    fn update_first_gap_occurrences(&mut self, length_to_move:u8) {
+    //     self.first_gap_occurrence = [None;10];
+    //     let mut biggest_gap_yet = 0u16;
+    //
+    //     for block in self.data_layout.iter().enumerate() {
+    //         if let Block::Gap{length} = block.1 {
+    //             if length > &biggest_gap_yet {
+    //                 for gap_occurrence in &mut self.first_gap_occurrence[biggest_gap_yet as usize + 1 ..= (*length) as usize] {*gap_occurrence = Some(block.0);}
+    //                 if length >= &9 {
+    //                     return
+    //                 }
+    //                 biggest_gap_yet = *length;
+    //             }
+    //         }
+    //     }
+    //     return;
+
+        //find smallest gap effected
+        let mut i = self.first_gap_occurrence[length_to_move as usize].unwrap();
+        let mut smallest_affected_gap = self.first_gap_occurrence.iter().enumerate().find(|x|*x.1 == Some(i)).unwrap().0 as u16;
+        //replace lost ones with none
+        //record where already none at to not waste work
+        
+        loop {
+            if i == self.data_layout.len() {return}
+            if let Block::Gap{length} = self.data_layout[i] {
+                if length >= smallest_affected_gap {
+                    for length in smallest_affected_gap..=length {self.first_gap_occurrence[length as usize] = Some(i)}
+                    if length >= 9 {return;}
+                    smallest_affected_gap = length + 1;
+                }
+            }
+            i += 1;
         }
     }
 }
@@ -178,7 +279,7 @@ impl Iterator for Part2PackedData {
                 Block::File{id, ..} => {
                     if *id == self.id_to_move {
 
-                        let _ = attempt_to_move(&mut self.data_layout);
+                        let _ = self.attempt_to_move();
                         // offset_from_end_to_search = 0;
                         if self.id_to_move == 0 {
                             assert_eq!(self.data_layout.len(), 1);
@@ -193,31 +294,6 @@ impl Iterator for Part2PackedData {
             }
         }
     }
-}
-fn attempt_to_move(data_layout: &mut Vec<Block>) -> Option<()>{
-    let length_to_move = *match data_layout.last().unwrap() {Block::File {length, ..} => length, _ => unreachable!()};
-    for (i, block) in data_layout.iter().enumerate() {
-        if let Block::Gap{length} = *block {
-            if length >= length_to_move as u16 {
-                data_layout.swap_remove(i);// removes index to move, index to move - 1 new last
-
-                let new_gap_length = match data_layout.last() {Some(Block::Gap {length}) => length, _ => &0} + (length_to_move as u16);
-                if let Block::Gap{..} = data_layout.last().unwrap()  {
-                    data_layout.pop();
-                }
-                data_layout.push(Block::Gap {
-                    length: new_gap_length,
-                });
-
-
-                if length > length_to_move as u16 {
-                    data_layout.insert(i+1, Block::Gap {length: length - length_to_move as u16});
-                }
-                return Some(())
-            }
-        }
-    }
-    None
 }
 
 #[cfg(test)]
