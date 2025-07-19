@@ -162,5 +162,4 @@ Project performance characteristics when run on a standard public GitHub actions
 
 | Day | Notes                                                                                        |
 |-----|----------------------------------------------------------------------------------------------|
-| 1   | Mem could be saved by using small u size, can't be bothered                                  |
 | 6   | Mem could be drastically improved by using a bitvec rather than Vec<bool> but less ergonomic |

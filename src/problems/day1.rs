@@ -18,11 +18,11 @@ impl crate::Day for Day1 {
 }
 
 fn part1 (input:&str) -> usize {
-    let values = input.split_whitespace().map(|x| x.parse::<usize>().unwrap());
+    let values = input.split_whitespace().map(|x| x.parse::<u32>().unwrap());
 
     let line_count: usize = input.chars().filter(|x| *x == 0xA as char).count();
     //println!("line count:{}",line_count);
-    let mut lists:[Vec<usize>;2] = [Vec::with_capacity(line_count/2+1),Vec::with_capacity(line_count/2+1)];
+    let mut lists:[Vec<u32>;2] = [Vec::with_capacity(line_count/2+1),Vec::with_capacity(line_count/2+1)];
     //Lerning point: how to run innitialisation twice for both lists without repeating memory
 
     let mut cur_column = 0;
@@ -45,17 +45,17 @@ fn part1 (input:&str) -> usize {
     let mut result_val:usize = 0;
     for i in 0..line_count {
         //println!("i:{},val1:{:?},val2:{:?},diff:{:?}",i,lists[0][i],lists[1][i],lists[0][i].abs_diff(lists[1][i]));
-        result_val += lists[0][i].abs_diff(lists[1][i]);
+        result_val += lists[0][i].abs_diff(lists[1][i]) as usize;
     }
     result_val
 }
 
 fn part2 (input:&str) -> usize {
-        let values = input.split_whitespace().map(|x| x.parse::<usize>().unwrap());
+    let values = input.split_whitespace().map(|x| x.parse::<u32>().unwrap());
 
     let line_count: usize = input.chars().filter(|x| *x == 0xA as char).count();
     //println!("line count:{}",line_count);
-    let mut lists:[Vec<usize>;2] = [Vec::with_capacity(line_count/2+1),Vec::with_capacity(line_count/2+1)];
+    let mut lists:[Vec<u32>;2] = [Vec::with_capacity(line_count/2+1),Vec::with_capacity(line_count/2+1)];
     //Lerning point: how to run innitialisation twice for both lists without repeating memory
 
     let mut cur_column = 0;
@@ -78,9 +78,9 @@ fn part2 (input:&str) -> usize {
     let [first_list, second_list] = lists;
     let mut second_list = second_list.into_iter();
     
-    let mut simularity_score:usize = 0;
+    let mut similarity_score:usize = 0;
     let mut comp_val = second_list.next();
-    let mut last_val:usize = first_list[0]+1;
+    let mut last_val:u32 = first_list[0]+1;
     for value in first_list{
         if value != last_val{
             current_count = 0;
@@ -90,9 +90,9 @@ fn part2 (input:&str) -> usize {
                 comp_val = second_list.next();
             }
         }
-        simularity_score += current_count * value;
+        similarity_score += current_count * (value as usize);
     }
-    simularity_score
+    similarity_score
 }
 
 #[allow(unused)]
