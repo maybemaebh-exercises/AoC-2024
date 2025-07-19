@@ -189,7 +189,8 @@ impl Part2PackedData {
         if let Block::Gap{length} = *block {
             assert!(length >= length_to_move as u16);
             // if length >= length_to_move as u16 {
-            self.data_layout.swap_remove(i);// removes index to move, index to move - 1 new last
+            self.data_layout.swap_remove(i);
+            self.set_invalid(GapOccurrence::Valid {i});// removes index to move, index to move - 1 new last
 
             let new_gap_length = match self.data_layout.last() {Some(Block::Gap {length}) => length, _ => &0} + (length_to_move as u16);
             if let Block::Gap{..} = self.data_layout.last().unwrap()  {
@@ -200,11 +201,11 @@ impl Part2PackedData {
             });
 
 
+
             if length > length_to_move as u16 {
                 self.data_layout.insert(i+1, Block::Gap {length: length - length_to_move as u16});
                 self.shift_refs_from_insert(i+1);
             }
-            self.set_invalid(length_to_move);
             Some(())
             // }
         } else {unreachable!()}
@@ -213,7 +214,7 @@ impl Part2PackedData {
         self.first_gap_occurrence.iter_mut()
             .filter_map(|occurrence|
             match occurrence {
-                GapOccurrence::Invalid{last_valid_i} => Some(last_valid_i),
+                GapOccurrence::Invalid{last_valid_i: _} => None,
                 GapOccurrence::Valid {i} => Some(i),
                 GapOccurrence::None => None,
             }
@@ -222,36 +223,36 @@ impl Part2PackedData {
             .for_each(|i|*i += 1);
     }
     fn first_gap_occurrence(&mut self, length_to_find:u8) -> Option<usize> {
+        // self.first_gap_occurrence = [GapOccurrence::Invalid {last_valid_i:0}; 10];
         match self.first_gap_occurrence[length_to_find as usize] {
             GapOccurrence::Valid {i} => Some(i),
             GapOccurrence::None => None,
             GapOccurrence::Invalid{last_valid_i} => {
-                let mut largest_gap_yet = 0;
                 for i in last_valid_i..self.data_layout.len() {
                     if let Block::Gap{length} = &self.data_layout[i] {
-                        if length > &largest_gap_yet {
-                            self.first_gap_occurrence[(largest_gap_yet as usize) + 1..=(*length) as usize]
+                        if length >= &(length_to_find as u16) {
+                            self.first_gap_occurrence[length_to_find as usize..=(*length) as usize]
                                 .iter_mut()
                                 .for_each(|gap_occurrence|
                                     if let GapOccurrence::Invalid { .. } = *gap_occurrence {*gap_occurrence = GapOccurrence::Valid { i } }
                                 );
+                            // println!("{:?}",self.first_gap_occurrence);
                             if length >= &(length_to_find as u16) {
                                 assert_eq!(self.first_gap_occurrence[length_to_find as usize], GapOccurrence::Valid{i});
+                                assert!(i >= last_valid_i);
                                 return Some(i);
                             }
-                            largest_gap_yet = *length;
                         }
                     }
                 }
-                self.first_gap_occurrence[(largest_gap_yet as usize) + 1..=9]
+                self.first_gap_occurrence[length_to_find as usize..=9]
                     .iter_mut()
                     .for_each(|gap_occurrence| if let GapOccurrence::Invalid { .. } = *gap_occurrence { *gap_occurrence = GapOccurrence::None});
                 None
             }
         }
     }
-    fn set_invalid(&mut self, length_to_move:u8) {
-        let old_gap = self.first_gap_occurrence[length_to_move as usize];
+    fn set_invalid(&mut self, old_gap:GapOccurrence) {
         let old_i = match old_gap {GapOccurrence::Valid {i} => i, _ => unreachable!()};
         self.first_gap_occurrence.iter_mut()
             .filter(|occurrence| **occurrence == old_gap)
@@ -301,5 +302,6 @@ mod tests {
     #[test]
     fn day9_part2() {
         assert_eq!(Day9().part2(TEST_INPUT), Some(2858));
+        assert_eq!(Day9().part2(Day9().full_input()), Some(6423258376982));
     }
 }
