@@ -3,22 +3,31 @@ use crate::Day;
 use tinyvec::TinyVec;
 
 pub struct Day10();
+fn shared_solution(input: &str, part2:bool) -> Option<usize> {
+    let grid = VecGrid::from_iter(
+        input.lines().next().unwrap().len(),
+        input.chars()
+            .filter(|c| c.is_ascii_digit())
+            .map(|c| c.to_digit(10).unwrap() as u8),
+        input.len()
+    );
+    let mut bool_vec = match part2 {false => Some(VecGrid::<bool>::new(grid.bounds)), true => None};
+    Some(grid.vec.iter()
+        .enumerate()
+        .filter(|num| *num.1 == 0)
+        .map(|num| grid.find_trailhead_score(
+            Option::from(&mut bool_vec),
+            grid.vec_index_to_uquard(num.0))
+        )
+        .sum())
+}
 
 impl Day for Day10 {
     fn part1(&self, input: &str) -> Option<usize> {
-        let grid = VecGrid::from_iter(
-            input.lines().next().unwrap().len(),
-            input.chars()
-                .filter(|c| c.is_ascii_digit())
-                .map(|c| c.to_digit(10).unwrap() as u8),
-            input.len()
-        );
-        let mut bool_vec = VecGrid::<bool>::new(grid.bounds);
-        Some(grid.vec.iter()
-            .enumerate()
-            .filter(|num| *num.1== 0)
-            .map(|num| grid.find_trailhead_score(&mut bool_vec, grid.vec_index_to_uquard(num.0)))
-            .sum())
+        shared_solution(input, false)
+    }
+    fn part2(&self, input: &str) -> Option<usize> {
+        shared_solution(input, true)
     }
     fn full_input(&self) -> &'static str {
         include_str!("../../input/day10.txt")
@@ -28,7 +37,7 @@ impl Day for Day10 {
         "Hoof It"
     }
 }
-struct TrailheadScoreFinder<'a>(& 'a VecGrid<u8>,&'a mut VecGrid<bool>);
+struct TrailheadScoreFinder<'a>(& 'a VecGrid<u8>,Option<&'a mut VecGrid<bool>>);
 impl TrailheadScoreFinder<'_> {
     pub fn find_trailhead_score(&mut self, position:Ucoord) -> usize
     {
@@ -44,7 +53,7 @@ impl TrailheadScoreFinder<'_> {
             )
             .filter(|neighboring_position| neighboring_position.1 == height + 1)
             .filter(|neighboring_position| {
-                let visited = self.1.index_mut(neighboring_position.0).unwrap();
+                let visited = match &mut self.1 {Some(visited) => visited.index_mut(neighboring_position.0).unwrap(), None => &mut false };
                 if !*visited {*visited = true; true}
                 else {false}
             })
@@ -56,8 +65,10 @@ impl TrailheadScoreFinder<'_> {
     }
 }
 impl VecGrid<u8> {
-    fn find_trailhead_score(&self, bool_vec: &mut VecGrid<bool>, position:Ucoord) -> usize {
-        bool_vec.vec.fill(false);
+    fn find_trailhead_score(&self, mut bool_vec: Option<&mut VecGrid<bool>>, position:Ucoord) -> usize {
+        if let Some(bool_vec) = &mut bool_vec {
+            bool_vec.vec.fill(false);
+        }
         TrailheadScoreFinder(self, bool_vec).find_trailhead_score(position)
     }
 }
@@ -74,9 +85,8 @@ mod tests {
         assert_eq!(Day10().part1(TEST_INPUT), Some(36));
     }
 
-    // #[test]
-    // fn day9_part2() {
-    //     assert_eq!(Day9().part2(TEST_INPUT), Some(2858));
-    //     assert_eq!(Day9().part2(Day9().full_input()), Some(6423258376982));
-    // }
+    #[test]
+    fn day9_part2() {
+        assert_eq!(Day10().part2(TEST_INPUT), Some(81));
+    }
 }
