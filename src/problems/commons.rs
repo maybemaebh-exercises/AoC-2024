@@ -90,6 +90,7 @@ pub struct VecGrid<T: Default + Debug> {
     pub bounds: [usize; 2],
     pub vec: Vec<T>,
 }
+
 impl <T: Default + Debug> VecGrid<T> {
     pub fn new(bounds: [usize; 2]) -> VecGrid<T> {
         let mut vec = Vec::with_capacity(bounds[0]*bounds[1]);
@@ -97,6 +98,19 @@ impl <T: Default + Debug> VecGrid<T> {
         assert_eq!(vec.capacity(), vec.len());
         VecGrid {
             bounds,
+            vec
+        }
+    }
+
+    pub fn from_iter<I>(width:usize, iter: I, capacity_hint: usize) -> VecGrid<T>
+    where
+        I: IntoIterator<Item=T>,
+    {
+        let mut vec = Vec::with_capacity(capacity_hint);
+        vec.extend(iter);
+        assert_eq!(vec.len() % width, 0);
+        VecGrid{
+            bounds:[width,vec.len()/width],
             vec
         }
     }

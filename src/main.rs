@@ -13,6 +13,7 @@ use crate::problems::day6::Day6;
 use crate::problems::day7::Day7;
 use crate::problems::day8::Day8;
 use crate::problems::day9::Day9;
+use crate::problems::day10::Day10;
 
 mod problems;
 mod staging_tracking_allocator;
@@ -162,6 +163,7 @@ fn main() {
         Box::new(Day7()),
         Box::new(Day8()),
         Box::new(Day9()),
+        Box::new(Day10())
     ];
 
     if env::args().any(|arg| &arg == "repeat-part") {
