@@ -26,10 +26,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Historian Hysteria</th>
 <td>13.7 KiB</td>
 <th>❌</th>
-<td>60µs</td>
+<td>54µs</td>
 <td>7.83 KiB</td><td>4</td>
 <td>1223326</td>
-<td>55µs</td>
+<td>58µs</td>
 <td>7.83 KiB</td><td>4</td>
 <td>21070419</td>
 </tr>
@@ -38,10 +38,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Red-Nosed Reports</th>
 <td>18.9 KiB</td>
 <th>❌</th>
-<td>54µs</td>
+<td>55µs</td>
 <td>0 bytes</td><td>0</td>
 <td>334</td>
-<td>154µs</td>
+<td>157µs</td>
 <td>0 bytes</td><td>0</td>
 <td>400</td>
 </tr>
@@ -50,10 +50,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Mull It Over</th>
 <td>16.8 KiB</td>
 <th>❌</th>
-<td>43µs</td>
+<td>42µs</td>
 <td>0 bytes</td><td>0</td>
 <td>165225049</td>
-<td>62µs</td>
+<td>63µs</td>
 <td>0 bytes</td><td>0</td>
 <td>108830766</td>
 </tr>
@@ -62,10 +62,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Ceres Search</th>
 <td>19.3 KiB</td>
 <th>❌</th>
-<td>477µs</td>
+<td>475µs</td>
 <td>0 bytes</td><td>0</td>
 <td>2514</td>
-<td>203µs</td>
+<td>195µs</td>
 <td>0 bytes</td><td>0</td>
 <td>1888</td>
 </tr>
@@ -74,10 +74,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Print Queue</th>
 <td>15.9 KiB</td>
 <th>❌</th>
-<td>296µs</td>
+<td>287µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5268</td>
-<td>365µs</td>
+<td>353µs</td>
 <td>50.8 KiB</td><td>2</td>
 <td>5799</td>
 </tr>
@@ -86,7 +86,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Guard Gallivant</th>
 <td>16.6 KiB</td>
 <th>❌</th>
-<td>71µs</td>
+<td>61µs</td>
 <td>16.6 KiB</td><td>1</td>
 <td>5534</td>
 <td>24ms</td>
@@ -124,7 +124,7 @@ Project performance characteristics when run on a standard public GitHub actions
 <th></th>
 <th>✅</th>
 <td>1ms</td>
-<td>16.1 KiB</td><td>37</td>
+<td>8.27 KiB</td><td>38</td>
 <td>882304362421</td>
 <td>2ms</td>
 <td>16.1 KiB</td><td>37</td>
@@ -135,10 +135,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Resonant Collinearity</th>
 <td>2.49 KiB</td>
 <th>❌</th>
-<td>60µs</td>
+<td>49µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>240</td>
-<td>63µs</td>
+<td>52µs</td>
 <td>2.44 KiB</td><td>1</td>
 <td>955</td>
 </tr>
@@ -147,10 +147,10 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Disk Fragmenter</th>
 <td>19.5 KiB</td>
 <th>❌</th>
-<td>156µs</td>
+<td>153µs</td>
 <td>19.5 KiB</td><td>1</td>
 <td>6386640365805</td>
-<td>822µs</td>
+<td>814µs</td>
 <td>142 KiB</td><td>14</td>
 <td>6423258376982</td>
 </tr>
@@ -159,13 +159,12 @@ Project performance characteristics when run on a standard public GitHub actions
 <th>Hoof It</th>
 <td>2.90 KiB</td>
 <th>❌</th>
-<td>240µs</td>
+<td>238µs</td>
 <td>5.75 KiB</td><td>2</td>
 <td>733</td>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
+<td>314µs</td>
+<td>2.90 KiB</td><td>1</td>
+<td>1514</td>
 </tr>
 </tbody>
 </table>
