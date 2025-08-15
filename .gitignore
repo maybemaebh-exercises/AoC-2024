@@ -1,3 +1,4 @@
 /target
 LOCAL_README.md
 DEV_README.md
+/local_flamegraph

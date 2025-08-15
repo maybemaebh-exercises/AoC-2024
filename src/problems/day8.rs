@@ -3,12 +3,25 @@ use num_integer::gcd;
 use tinyvec::TinyVec;
 use crate::problems::commons::*;
 
-pub fn part1(input: &str) -> usize {
-    Part::Part1.calculate(input)
+pub struct Day8();
+impl crate::Day for Day8 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(Part::Part1.calculate(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(Part::Part2.calculate(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day8.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Resonant Collinearity"
+    }
 }
-pub fn part2(input: &str) -> usize {
-    Part::Part2.calculate(input)
-}
+
 enum Part{
     Part1,
     Part2
@@ -108,6 +121,7 @@ impl VecGrid<bool> {
 }
 #[cfg(test)]
 mod tests {
+    use crate::Day;
     use crate::problems::day8::*;
 
     #[allow(unused)]
@@ -115,11 +129,11 @@ mod tests {
 
     #[test]
     fn day8_part1() {
-        assert_eq!(part1(TEST_INPUT), 14);
+        assert_eq!(Day8().part1(TEST_INPUT).unwrap(), 14);
     }
 
     #[test]
     fn day7_part2() {
-        assert_eq!(part2(TEST_INPUT), 34);
+        assert_eq!(Day8().part2(TEST_INPUT).unwrap(), 34);
     }
 }

@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::env::consts::ARCH;
 use std::fmt::Debug;
 use std::hash::{Hash};
@@ -89,6 +90,7 @@ pub struct VecGrid<T: Default + Debug> {
     pub bounds: [usize; 2],
     pub vec: Vec<T>,
 }
+
 impl <T: Default + Debug> VecGrid<T> {
     pub fn new(bounds: [usize; 2]) -> VecGrid<T> {
         let mut vec = Vec::with_capacity(bounds[0]*bounds[1]);
@@ -96,6 +98,19 @@ impl <T: Default + Debug> VecGrid<T> {
         assert_eq!(vec.capacity(), vec.len());
         VecGrid {
             bounds,
+            vec
+        }
+    }
+
+    pub fn from_iter<I>(width:usize, iter: I, capacity_hint: usize) -> VecGrid<T>
+    where
+        I: IntoIterator<Item=T>,
+    {
+        let mut vec = Vec::with_capacity(capacity_hint);
+        vec.extend(iter);
+        assert_eq!(vec.len() % width, 0);
+        VecGrid{
+            bounds:[width,vec.len()/width],
             vec
         }
     }
@@ -261,4 +276,56 @@ pub fn get_avalible_phsical_parralelism() -> usize {
     };
     //println!("{},{},{}",physical.get(),paral.get(),out);
     out
+}
+
+pub struct EnumeratedVecDeque<T>{
+    vec: VecDeque<T>,
+    popped_from_front_count: usize,
+}
+
+#[allow(dead_code)]
+impl<T> EnumeratedVecDeque<T> {
+    pub fn new(vec: VecDeque<T>) -> Self {
+        EnumeratedVecDeque {vec, popped_from_front_count: 0}
+    }
+    pub fn front(&self) -> Option<(usize, &T)> {
+        Some((
+            self.popped_from_front_count,
+            self.vec.front()?
+        ))
+    }
+    pub fn back(&self) -> Option<(usize,&T)> {
+        Some((
+            self.popped_from_front_count + self.vec.len() - 1,
+            self.vec.back()?
+        ))
+    }
+    pub fn front_mut(&mut self) -> Option<(usize,&mut T)> {
+        Some((
+            self.popped_from_front_count,
+            self.vec.front_mut()?
+        ))
+    }
+    pub fn back_mut(&mut self) -> Option<(usize,&mut T)> {
+        Some((
+            self.popped_from_front_count + self.vec.len() - 1,
+            self.vec.back_mut()?
+        ))
+    }
+    pub fn pop_front(&mut self) -> Option<(usize, T)> {
+        self.popped_from_front_count += 1;
+        Some((
+            self.popped_from_front_count - 1,
+            self.vec.pop_front()?
+        ))
+    }
+    pub fn pop_back(&mut self) -> Option<(usize,T)> {
+        Some((
+            self.popped_from_front_count + self.vec.len() - 1,
+            self.vec.pop_back()?
+        ))
+    }
+    pub fn len(&self) -> usize {
+        self.vec.len()
+    }
 }

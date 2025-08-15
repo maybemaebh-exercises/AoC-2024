@@ -1,6 +1,25 @@
 use tinyvec::TinyVec;
 
-pub fn part1(input:&str) -> usize {
+pub struct Day3();
+impl crate::Day for Day3 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day3.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Mull It Over"
+    }
+}
+
+fn part1(input:&str) -> usize {
     let input = input.chars();
 
     let mul_term = ['m','u','l','(',',',')'];
@@ -47,7 +66,7 @@ pub fn part1(input:&str) -> usize {
     running_total
 }
 
-pub fn part2(input:&str) -> usize {
+fn part2(input:&str) -> usize {
 
     let input = input.chars();
 

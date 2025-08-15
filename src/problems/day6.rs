@@ -9,7 +9,30 @@ use std::thread;
 use std::thread::JoinHandle;
 use tinyvec::*;
 
-pub fn part1(input: &str) -> usize {
+pub struct Day6();
+impl crate::Day for Day6 {
+    fn part1(&self, input: &str) -> Option<usize> {
+        Some(part1(input))
+    }
+
+    fn part2(&self, input: &str) -> Option<usize> {
+        Some(part2(input))
+    }
+    
+    fn part2_multithreaded(&self, input: &str) -> Option<usize> {
+        Some(part2_multithreaded(input))
+    }
+    
+    fn full_input(&self) -> &'static str {
+        include_str!("../../input/day6.txt")
+    }
+
+    fn problem_name(&self) -> &'static str {
+        "Guard Gallivant"
+    }
+}
+
+fn part1(input: &str) -> usize {
     let mut grid = CharGrid::<AsciiString>::new(input);
     let mut running_count = 1;//starting position
 
@@ -34,7 +57,7 @@ pub fn part1(input: &str) -> usize {
 }
 
 
-pub fn part2(input: &str) -> usize {
+fn part2(input: &str) -> usize {
     let mut hashset_for_loops_at = HashSet::with_capacity(200);
     let grid = CharGrid::<AsciiString>::new(input);
     let initial_guard_position = grid.find_initial_guard_location();
@@ -61,7 +84,7 @@ pub fn part2(input: &str) -> usize {
 
 
 #[allow(dead_code)]
-pub fn part2_multithread_rayon(input: &str) -> usize {
+fn part2_multithread_rayon(input: &str) -> usize {
     let _pool = rayon::ThreadPoolBuilder::new().build().unwrap();//adds 33% to time but is only fare
     thread_local! {
     static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<u24>> = RefCell::new(HashSet::with_capacity(400))
@@ -82,7 +105,7 @@ pub fn part2_multithread_rayon(input: &str) -> usize {
 }
 
 
-pub fn part2_multithread(input: &str) -> usize {
+fn part2_multithreaded(input: &str) -> usize {
     // thread_local! {
     // static HASHSET_FOR_LOOPS_AT:RefCell<HashSet<(Ucoord, Direction)>> = RefCell::new(HashSet::with_capacity(400))
     // }
@@ -253,7 +276,7 @@ mod tests {
 
     #[test]
     fn day6_part2_multithread() {
-        assert_eq!(part2_multithread(TEST_INPUT), 6);
+        assert_eq!(part2_multithreaded(TEST_INPUT), 6);
     }
 
     #[test]

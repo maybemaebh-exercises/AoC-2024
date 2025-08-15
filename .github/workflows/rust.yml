@@ -32,7 +32,16 @@ jobs:
           ~/.cargo/git
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      
+
+    - name: apt update
+      run: sudo apt update
+    - name: Install flamegraph dependencies
+      run: sudo apt install linux-tools-common linux-tools-generic linux-tools-`uname -r`
+    - name: Install flamegraph
+      run: cargo install flamegraph
+    - name: Set perf permisions
+      run: echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+
     - name: Build
       run: cargo build --profile=release --verbose
     - name: Run Clippy
@@ -41,7 +50,7 @@ jobs:
       run: cargo test --profile=release --verbose
 
     - name: Run as release to update readme
-      run: cargo run --profile=release updatereadme
+      run: cargo run --profile=release update-readme
 
     - name: Commit files
       run: |
