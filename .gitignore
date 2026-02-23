@@ -2,3 +2,5 @@
 LOCAL_README.md
 DEV_README.md
 /local_flamegraph
+perf.data
+perf.data.old
