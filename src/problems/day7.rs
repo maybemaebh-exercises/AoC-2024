@@ -109,7 +109,7 @@ impl Part {
         match remaining_terms.next() {
             Some(Ok(next_term)) =>
                 (
-                    running_total % next_term == 0
+                    running_total.is_multiple_of(next_term)
                         &&
                         self.can_reach_sum_backward(&remaining_terms, initial_value, running_total / next_term)
                 )

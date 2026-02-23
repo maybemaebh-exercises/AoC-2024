@@ -43,6 +43,7 @@ fn part1 (input:&str) -> usize {
     //println!("sorted list 0:{:?}",sorted_lists[0]);
     
     let mut result_val:usize = 0;
+    #[allow(clippy::needless_range_loop)]
     for i in 0..line_count {
         //println!("i:{},val1:{:?},val2:{:?},diff:{:?}",i,lists[0][i],lists[1][i],lists[0][i].abs_diff(lists[1][i]));
         result_val += lists[0][i].abs_diff(lists[1][i]) as usize;
