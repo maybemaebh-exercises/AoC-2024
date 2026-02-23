@@ -114,7 +114,9 @@ fn day_row_and_flamegraph(day: &(usize, &Box<dyn Day>)) -> String{
         let mut part_row = String::new();
 
         if day.1.run_part(part2, multithreaded).is_some() {
-            generate_flamegraph(*day, part2, multithreaded);
+            if std::env::consts::OS != "windows" {
+                generate_flamegraph(*day, part2, multithreaded);
+            }
             if multithreaded { day_multithreaded = true; }
 
             part_row.push_str(&format!("\n<td>{:.0?}</td>", benchmark_problem_part(day.1.as_ref(), part2, multithreaded)));
